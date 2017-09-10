@@ -120,6 +120,13 @@ mysql -h localhost -u "${dbUser}" -p"${dbPassword}" "${nextcloudDatabase}" < "${
 echo "Done"
 
 #
+# Start webserver
+#
+echo "Starting nginx..."
+service nginx start
+echo "Done"
+
+#
 # Set directory permissions
 #
 echo "Setting directory permissions..."
@@ -128,11 +135,14 @@ chown -R "${webserverUser}" "${nextcloudDataDir}"
 echo "Done"
 
 #
-# Start webserver
+# Update the system data-fingerprint (see https://docs.nextcloud.com/server/12/admin_manual/configuration_server/occ_command.html#maintenance-commands-label)
 #
-echo "Starting nginx..."
-service nginx start
+echo "Updating the system data-fingerprint..."
+cd "${nextcloudFileDir}"
+sudo -u "${webserverUser}" php occ maintenance:data-fingerprint
+cd ~
 echo "Done"
+
 
 #
 # Restore hardened directory permissions
@@ -157,15 +167,6 @@ echo "Done"
 echo "Switching off maintenance mode..."
 cd "${nextcloudFileDir}"
 sudo -u "${webserverUser}" php occ maintenance:mode --off
-cd ~
-echo "Done"
-
-#
-# Update the system data-fingerprint (see https://docs.nextcloud.com/server/12/admin_manual/configuration_server/occ_command.html#maintenance-commands-label)
-#
-echo "Updating the system data-fingerprint..."
-cd "${nextcloudFileDir}"
-sudo -u "${webserverUser}" php occ maintenance:data-fingerprint
 cd ~
 echo "Done"
 
