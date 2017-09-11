@@ -22,6 +22,7 @@ backupdir="${backupMainDir}/${currentDate}/"
 # TODO: The directory of your Nextcloud installation (this is a directory under your web root)
 nextcloudFileDir="/var/www/nextcloud"
 # TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)
+# If your data directory is located under Nextcloud's file directory (somewhere in the web root), the data directory should not be a separate part of the backup
 nextcloudDataDir="/var/nextcloud_data"
 # TODO: Your Nextcloud database name
 nextcloudDatabase="nextcloud_db"
