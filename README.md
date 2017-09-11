@@ -16,7 +16,7 @@ The scripts take care of these three items to backup automatically.
 **Important:**
 
 - After cloning or downloading the repository, you'll have to edit the scripts so that they represent your current Nextcloud installation (directories, users, etc.).
-- The scripts assume that Nextcloud's data directory is *not* a subdirectory of the Nextcloud installation (file directory). The general recommendation is that the data directory should not be located somewhere in the web folder of your webserver (usually */var/www/*), but in a different folder (e.g. */var/nextcloud_data*).
+- The scripts assume that Nextcloud's data directory is *not* a subdirectory of the Nextcloud installation (file directory). The general recommendation is that the data directory should not be located somewhere in the web folder of your webserver (usually */var/www/*), but in a different folder (e.g. */var/nextcloud_data*). However, if your data directory is located under the Nextcloud file directory, you'll have to change the scripts so that the data directory is not part of the backup/restore (otherwise, it would be copied twice).
 - If you do not want to save the database password in the scripts, remove the variable *dbPassword* and call *mysql* with the *-p* parameter (without password). When calling the scripts manually, you'll be asked for the database password. 
 
 ## Backup
