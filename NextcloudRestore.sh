@@ -27,7 +27,7 @@ nextcloudDatabase="nextcloud_db"
 # TODO: Your Nextcloud database user
 dbUser="nextcloud_db_user"
 # TODO: The password of the Nextcloud database user
-dbPassword="MeInPasSw0rT"
+dbPassword="mYpAsSw0rd"
 # TODO: Your webserver user
 webserverUser="www-data"
 
