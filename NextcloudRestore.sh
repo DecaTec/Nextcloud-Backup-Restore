@@ -77,6 +77,7 @@ cd "${nextcloudFileDir}"
 sudo -u "${webserverUser}" php occ maintenance:mode --on
 cd ~
 echo "Done"
+echo
 
 #
 # Stop webserver
@@ -84,6 +85,7 @@ echo "Done"
 echo "Stopping nginx..."
 service nginx stop
 echo "Done"
+echo
 
 #
 # Delete old Nextcloud direcories
@@ -92,10 +94,13 @@ echo "Deleting old Nextcloud file directory..."
 rm -r "${nextcloudFileDir}"
 mkdir -p "${nextcloudFileDir}"
 echo "Done"
+echo
+
 echo "Deleting old Nextcloud data directory..."
 rm -r "${nextcloudDataDir}"
 mkdir -p "${nextcloudDataDir}"
 echo "Done"
+echo
 
 #
 # Restore file and data directory
@@ -103,9 +108,12 @@ echo "Done"
 echo "Restoring Nextcloud file directory..."
 tar -xpzf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
 echo "Done"
+echo
+
 echo "Restoring Nextcloud data directory..."
 tar -xpzf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
 echo "Done"
+echo
 
 #
 # Restore database
@@ -113,12 +121,17 @@ echo "Done"
 echo "Dropping old Nextcloud DB..."
 mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "DROP DATABASE ${nextcloudDatabase}"
 echo "Done"
+echo
+
 echo "Creating new DB for Nextcloud..."
 mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase}"
 echo "Done"
+echo
+
 echo "Restoring backup DB..."
 mysql -h localhost -u "${dbUser}" -p"${dbPassword}" "${nextcloudDatabase}" < "${currentRestoreDir}/${fileNameBackupDb}"
 echo "Done"
+echo
 
 #
 # Start webserver
@@ -126,6 +139,7 @@ echo "Done"
 echo "Starting nginx..."
 service nginx start
 echo "Done"
+echo
 
 #
 # Set directory permissions
@@ -134,6 +148,7 @@ echo "Setting directory permissions..."
 chown -R "${webserverUser}" "${nextcloudFileDir}"
 chown -R "${webserverUser}" "${nextcloudDataDir}"
 echo "Done"
+echo
 
 #
 # Update the system data-fingerprint (see https://docs.nextcloud.com/server/12/admin_manual/configuration_server/occ_command.html#maintenance-commands-label)
@@ -143,6 +158,7 @@ cd "${nextcloudFileDir}"
 sudo -u "${webserverUser}" php occ maintenance:data-fingerprint
 cd ~
 echo "Done"
+echo
 
 
 #
@@ -161,6 +177,7 @@ chown root:"${webserverUser}" "${nextcloudDataDir}/.htaccess"
 chmod 0644 "${nextcloudFileDir}/.htaccess"
 chmod 0644 "${nextcloudDataDir}/.htaccess"
 echo "Done"
+echo
 
 #
 # Disbale maintenance mode
@@ -170,6 +187,8 @@ cd "${nextcloudFileDir}"
 sudo -u "${webserverUser}" php occ maintenance:mode --off
 cd ~
 echo "Done"
+echo
 
+echo
 echo "DONE!"
 echo "Backup ${restore} successfully restored."

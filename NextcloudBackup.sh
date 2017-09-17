@@ -32,6 +32,8 @@ dbUser="nextcloud_db_user"
 dbPassword="mYpAsSw0rd"
 # TODO: Your webserver user
 webserverUser="www-data"
+# TODO: The maximum number of backups to keep (when set to 0, all backups are kept)
+maxNrOfBackups=0
 
 # File names for backup files
 # If you prefer other file names, you'll also have to change the NextcloudRestore.sh script.
@@ -70,6 +72,7 @@ cd "${nextcloudFileDir}"
 sudo -u "${webserverUser}" php occ maintenance:mode --on
 cd ~
 echo "Done"
+echo
 
 #
 # Stop webserver
@@ -77,6 +80,7 @@ echo "Done"
 echo "Stopping nginx..."
 service nginx stop
 echo "Done"
+echo
 
 #
 # Backup file and data directory
@@ -84,9 +88,12 @@ echo "Done"
 echo "Creating backup of Nextcloud file directory..."
 tar -cpzf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
 echo "Done"
+echo
+
 echo "Creating backup of Nextcloud data directory..."
 tar -cpzf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
 echo "Done"
+echo
 
 #
 # Backup DB
@@ -94,18 +101,45 @@ echo "Done"
 echo "Backup Nextcloud database..."
 mysqldump --single-transaction -h localhost -u "${dbUser}" -p"${dbPassword}" "${nextcloudDatabase}" > "${backupdir}/${fileNameBackupDb}"
 echo "Done"
+echo
 
 #
 # Start webserver
 #
+echo "Starting webserver..."
 service nginx start
+echo "Done"
+echo
 
 #
 # Disable maintenance mode
 #
+echo "Switching off maintenance mode..."
 cd "${nextcloudFileDir}"
 sudo -u "${webserverUser}" php occ maintenance:mode --off
 cd ~
+echo "Done"
+echo
 
+#
+# Delete old backups
+#
+if [ ${maxNrOfBackups} != 0 ]
+then	
+	nrOfBackups=$(ls -l ${backupMainDir} | grep -c ^d)
+	
+	if [  ${maxNrOfBackups} > ${nrOfBackups}} ]
+	then
+		echo "Removing old backups..."
+		ls -t ${backupMainDir} | tail -$(( nrOfBackups - maxNrOfBackups )) | while read dirToRemove; do
+		echo "${dirToRemove}"
+		rm -r ${backupMainDir}/${dirToRemove}
+		echo "Done"
+		echo
+    done
+	fi
+fi
+
+echo
 echo "DONE!"
 echo "Backup created: ${backupdir}"
