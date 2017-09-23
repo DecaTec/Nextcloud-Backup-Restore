@@ -145,8 +145,8 @@ echo
 # Set directory permissions
 #
 echo "Setting directory permissions..."
-chown -R "${webserverUser}" "${nextcloudFileDir}"
-chown -R "${webserverUser}" "${nextcloudDataDir}"
+chown -R "${webserverUser}":"${webserverUser}" "${nextcloudFileDir}"
+chown -R "${webserverUser}":"${webserverUser}" "${nextcloudDataDir}"
 echo "Done"
 echo
 
@@ -157,25 +157,6 @@ echo "Updating the system data-fingerprint..."
 cd "${nextcloudFileDir}"
 sudo -u "${webserverUser}" php occ maintenance:data-fingerprint
 cd ~
-echo "Done"
-echo
-
-
-#
-# Restore hardened directory permissions
-#
-echo "Set hardened directory permissions..."
-find "${nextcloudFileDir}" -type f -print0 | xargs -0 chmod 0640
-find "${nextcloudFileDir}" -type d -print0 | xargs -0 chmod 0750
-chown -R root:"${webserverUser}" "${nextcloudFileDir}"
-chown -R "${webserverUser}":"${webserverUser}" "${nextcloudFileDir}/apps/"
-chown -R "${webserverUser}":"${webserverUser}" "${nextcloudFileDir}/config/"
-chown -R "${webserverUser}":"${webserverUser}" "${nextcloudFileDir}/themes/"
-chown -R "${webserverUser}":"${webserverUser}" "${nextcloudDataDir}"
-chown root:"${webserverUser}" "${nextcloudFileDir}/.htaccess"
-chown root:"${webserverUser}" "${nextcloudDataDir}/.htaccess"
-chmod 0644 "${nextcloudFileDir}/.htaccess"
-chmod 0644 "${nextcloudDataDir}/.htaccess"
 echo "Done"
 echo
 
