@@ -23,7 +23,7 @@ nextcloudFileDir="/var/www/nextcloud"
 # TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)
 # If your data directory is located under Nextcloud's file directory (somewhere in the web root), the data directory should not be restored separately
 nextcloudDataDir="/var/nextcloud_data"
-# TODO: The service name of the webserver. Used to start/stop webserver (e.g. 'service <webserverServiceName> start')
+# TODO: The service name of the web server. Used to start/stop web server (e.g. 'service <webserverServiceName> start')
 webserverServiceName="nginx"
 # TODO: Your Nextcloud database name
 nextcloudDatabase="nextcloud_db"
@@ -31,7 +31,7 @@ nextcloudDatabase="nextcloud_db"
 dbUser="nextcloud_db_user"
 # TODO: The password of the Nextcloud database user
 dbPassword="mYpAsSw0rd"
-# TODO: Your webserver user
+# TODO: Your web server user
 webserverUser="www-data"
 
 # File names for backup files
@@ -82,9 +82,9 @@ echo "Done"
 echo
 
 #
-# Stop webserver
+# Stop web server
 #
-echo "Stopping webserver..."
+echo "Stopping web server..."
 service "${webserverServiceName}" stop
 echo "Done"
 echo
@@ -136,9 +136,9 @@ echo "Done"
 echo
 
 #
-# Start webserver
+# Start web server
 #
-echo "Starting webserver..."
+echo "Starting web server..."
 service "${webserverServiceName}" start
 echo "Done"
 echo
