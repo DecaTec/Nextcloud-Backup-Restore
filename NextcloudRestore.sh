@@ -17,7 +17,7 @@
 # TODO: The directory where you store the Nextcloud backups
 backupMainDir="/mnt/Share/NextcloudBackups/"
 restore=$1
-currentRestoreDir="${mainBackupdir}/${restore}"
+currentRestoreDir="${mainBackupDir}/${restore}"
 # TODO: The directory of your Nextcloud installation (this is a directory under your web root)
 nextcloudFileDir="/var/www/nextcloud"
 # TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)
