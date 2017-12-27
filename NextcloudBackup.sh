@@ -126,11 +126,11 @@ echo
 #
 # Delete old backups
 #
-if [ ${maxNrOfBackups} != 0 ]
+if (( ${maxNrOfBackups} != 0 ))
 then	
 	nrOfBackups=$(ls -l ${backupMainDir} | grep -c ^d)
 	
-	if [  ${maxNrOfBackups} > ${nrOfBackups} ]
+	if (( ${nrOfBackups} > ${maxNrOfBackups} ))
 	then
 		echo "Removing old backups..."
 		ls -t ${backupMainDir} | tail -$(( nrOfBackups - maxNrOfBackups )) | while read dirToRemove; do
