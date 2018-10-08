@@ -153,7 +153,7 @@ echo "Done"
 echo
 
 #
-# Update the system data-fingerprint (see https://docs.nextcloud.com/server/13/admin_manual/configuration_server/occ_command.html#maintenance-commands-label)
+# Update the system data-fingerprint (see https://docs.nextcloud.com/server/14/admin_manual/configuration_server/occ_command.html#maintenance-commands-label)
 #
 echo "Updating the system data-fingerprint..."
 cd "${nextcloudFileDir}"
