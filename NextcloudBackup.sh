@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 # Usage: ./NextcloudBackup.sh
-# 
+#
 # The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-18-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
 #
 
@@ -45,6 +45,32 @@ fileNameBackupDb="nextcloud-db.sql"
 
 # Function for error messages
 errorecho() { cat <<< "$@" 1>&2; }
+
+function DisableMaintenanceMode() {
+	echo "Switching off maintenance mode..."
+	cd "${nextcloudFileDir}"
+	sudo -u "${webserverUser}" php occ maintenance:mode --off
+	cd ~
+	echo "Done"
+	echo
+}
+
+# Capture CTRL+C
+trap CtrlC INT
+
+function CtrlC() {
+	read -p "Backup cancelled. Keep maintenance mode? [y/n] " -n 1 -r
+	echo
+
+	if ! [[ $REPLY =~ ^[Yy]$ ]]
+	then
+		DisableMaintenanceMode
+	else
+		echo "Maintenance mode still enabled."
+	fi
+
+	exit 1
+}
 
 #
 # Check for root
@@ -116,29 +142,24 @@ echo
 #
 # Disable maintenance mode
 #
-echo "Switching off maintenance mode..."
-cd "${nextcloudFileDir}"
-sudo -u "${webserverUser}" php occ maintenance:mode --off
-cd ~
-echo "Done"
-echo
+DisableMaintenanceMode()
 
 #
 # Delete old backups
 #
 if (( ${maxNrOfBackups} != 0 ))
-then	
+then
 	nrOfBackups=$(ls -l ${backupMainDir} | grep -c ^d)
-	
+
 	if (( ${nrOfBackups} > ${maxNrOfBackups} ))
 	then
 		echo "Removing old backups..."
 		ls -t ${backupMainDir} | tail -$(( nrOfBackups - maxNrOfBackups )) | while read dirToRemove; do
-		echo "${dirToRemove}"
-		rm -r ${backupMainDir}/${dirToRemove}
-		echo "Done"
-		echo
-    done
+			echo "${dirToRemove}"
+			rm -r ${backupMainDir}/${dirToRemove}
+			echo "Done"
+			echo
+		done
 	fi
 fi
 
