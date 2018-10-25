@@ -48,9 +48,7 @@ errorecho() { cat <<< "$@" 1>&2; }
 
 function DisableMaintenanceMode() {
 	echo "Switching off maintenance mode..."
-	cd "${nextcloudFileDir}"
-	sudo -u "${webserverUser}" php occ maintenance:mode --off
-	cd ~
+	sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:mode --off
 	echo "Done"
 	echo
 }
@@ -96,9 +94,7 @@ fi
 # Set maintenance mode
 #
 echo "Set maintenance mode for Nextcloud..."
-cd "${nextcloudFileDir}"
-sudo -u "${webserverUser}" php occ maintenance:mode --on
-cd ~
+sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:mode --on
 echo "Done"
 echo
 
@@ -142,7 +138,7 @@ echo
 #
 # Disable maintenance mode
 #
-DisableMaintenanceMode()
+DisableMaintenanceMode
 
 #
 # Delete old backups
