@@ -15,7 +15,7 @@
 
 # Variables
 # TODO: The directory where you store the Nextcloud backups
-mainBackupDir="/mnt/Share/NextcloudBackups/"
+mainBackupDir="/mnt/Share/NextcloudBackups"
 restore=$1
 currentRestoreDir="${mainBackupDir}/${restore}"
 # TODO: The directory of your Nextcloud installation (this is a directory under your web root)
@@ -108,12 +108,12 @@ echo
 # Restore file and data directory
 #
 echo "Restoring Nextcloud file directory..."
-tar -xpzf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
+tar -xmpzf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
 echo "Done"
 echo
 
 echo "Restoring Nextcloud data directory..."
-tar -xpzf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
+tar -xmpzf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
 echo "Done"
 echo
 
@@ -156,9 +156,7 @@ echo
 # Update the system data-fingerprint (see https://docs.nextcloud.com/server/14/admin_manual/configuration_server/occ_command.html#maintenance-commands-label)
 #
 echo "Updating the system data-fingerprint..."
-cd "${nextcloudFileDir}"
-sudo -u "${webserverUser}" php occ maintenance:data-fingerprint
-cd ~
+sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:data-fingerprint
 echo "Done"
 echo
 
@@ -166,9 +164,7 @@ echo
 # Disbale maintenance mode
 #
 echo "Switching off maintenance mode..."
-cd "${nextcloudFileDir}"
-sudo -u "${webserverUser}" php occ maintenance:mode --off
-cd ~
+sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:mode --off
 echo "Done"
 echo
 

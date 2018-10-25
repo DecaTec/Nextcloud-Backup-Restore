@@ -16,7 +16,7 @@
 # Variables
 currentDate=$(date +"%Y%m%d_%H%M%S")
 # TODO: The directory where you store the Nextcloud backups
-backupMainDir="/mnt/Share/NextcloudBackups/"
+backupMainDir="/mnt/Share/NextcloudBackups"
 # The actual directory of the current backup - this is a subdirectory of the main directory above with a timestamp
 backupdir="${backupMainDir}/${currentDate}/"
 # TODO: The directory of your Nextcloud installation (this is a directory under your web root)
