@@ -16,10 +16,10 @@ The scripts take care of these three items to backup automatically.
 **Important:**
 
 - After cloning or downloading the repository, you'll have to edit the scripts so that they represent your current Nextcloud installation (directories, users, etc.). All values which need to be customized are marked with *TODO* in the script's comments.
-- The scripts assume that Nextcloud's data directory is *not* a subdirectory of the Nextcloud installation (file directory). The general recommendation is that the data directory should not be located somewhere in the web folder of your webserver (usually */var/www/*), but in a different folder (e.g. */var/nextcloud_data*). For more information, see [here](https://docs.nextcloud.com/server/14/admin_manual/installation/installation_wizard.html#data-directory-location-label).
+- The scripts assume that Nextcloud's data directory is *not* a subdirectory of the Nextcloud installation (file directory). The general recommendation is that the data directory should not be located somewhere in the web folder of your webserver (usually */var/www/*), but in a different folder (e.g. */var/nextcloud_data*). For more information, see [here](https://docs.nextcloud.com/server/15/admin_manual/installation/installation_wizard.html#data-directory-location-label).
 - However, if your data directory *is* located under the Nextcloud file directory, you'll have to change the scripts so that the data directory is not part of the backup/restore (otherwise, it would be copied twice).
 - The scripts only backup the Nextcloud data directory. If you have any external storage mounted in Nextcloud, these directories have to be handled separately.
-- If you have enabled 4 byte support (see [Nextcloud Administration Manual](https://docs.nextcloud.com/server/14/admin_manual/configuration_database/mysql_4byte_support.html)) while backup, you have to enable 4 byte support on the target system *before* restoring the backup.
+- If you have enabled 4 byte support (see [Nextcloud Administration Manual](https://docs.nextcloud.com/server/15/admin_manual/configuration_database/mysql_4byte_support.html)) while backup, you have to enable 4 byte support on the target system *before* restoring the backup.
 - If you do not want to save the database password in the scripts, remove the variable *dbPassword* and call *mysql* with the *-p* parameter (without password). When calling the scripts manually, you'll be asked for the database password. 
 
 ## Backup
