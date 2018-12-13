@@ -24,7 +24,7 @@ nextcloudFileDir="/var/www/nextcloud"
 # TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)
 # If your data directory is located under Nextcloud's file directory (somewhere in the web root), the data directory should not be a separate part of the backup
 nextcloudDataDir="/var/nextcloud_data"
-# TODO: The service name of the web server. Used to start/stop web server (e.g. 'service <webserverServiceName> start')
+# TODO: The service name of the web server. Used to start/stop web server (e.g. 'systemctl start <webserverServiceName>')
 webserverServiceName="nginx"
 # TODO: Your Nextcloud database name
 nextcloudDatabase="nextcloud_db"
@@ -102,7 +102,7 @@ echo
 # Stop web server
 #
 echo "Stopping web server..."
-service "${webserverServiceName}" stop
+systemctl stop "${webserverServiceName}"
 echo "Done"
 echo
 
@@ -131,7 +131,7 @@ echo
 # Start web server
 #
 echo "Starting web server..."
-service "${webserverServiceName}" start
+systemctl start "${webserverServiceName}"
 echo "Done"
 echo
 
