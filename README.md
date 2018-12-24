@@ -20,7 +20,7 @@ The scripts take care of these three items to backup automatically.
 - However, if your data directory *is* located under the Nextcloud file directory, you'll have to change the scripts so that the data directory is not part of the backup/restore (otherwise, it would be copied twice).
 - The scripts only backup the Nextcloud data directory. If you have any external storage mounted in Nextcloud, these directories have to be handled separately.
 - The scripts assume that you are using MySQL/MariaDB as database for Nextcloud. However, it also supports PostreSQL databases. In this case you have to uncomment the parts of backing up/restoring the database.
-- You should have enabled 4 byte support (see [Nextcloud Administration Manual](https://docs.nextcloud.com/server/15/admin_manual/configuration_database/mysql_4byte_support.html)) on your Nextcloud database. Otherwise, when you have *not* enabled 4 byte support, you have to edit the restore script, to that the database is not created with 4 byte support enabled.
+- You should have enabled 4 byte support (see [Nextcloud Administration Manual](https://docs.nextcloud.com/server/15/admin_manual/configuration_database/mysql_4byte_support.html)) on your Nextcloud database. Otherwise, when you have *not* enabled 4 byte support, you have to edit the restore script, so that the database is not created with 4 byte support enabled.
 
 ## Backup
 
