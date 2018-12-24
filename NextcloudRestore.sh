@@ -121,17 +121,32 @@ echo
 # Restore database
 #
 echo "Dropping old Nextcloud DB..."
+# MySQL/MariaDB:
 mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "DROP DATABASE ${nextcloudDatabase}"
+
+# PostgreSQL (uncomment if you are using PostgreSQL as Nextcloud database)
+#PGPASSWORD="${dbPassword} psql -h localhost -U "${dbUser}" -d nextcloud -c "DROP DATABASE \"${nextcloudDatabase}\";"
 echo "Done"
 echo
 
 echo "Creating new DB for Nextcloud..."
-mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase}"
+# MySQL/MariaDB:
+# Use this if the databse from the backup uses UTF8 with multibyte support (e.g. for emoijs in filenames):
+mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci"
+# Use this if the database from the backup DOES NOT use UTF8 with multibyte support (e.g. for emoijs in filenames):
+#mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase}"
+
+# PostgreSQL (uncomment if you are using PostgreSQL as Nextcloud database)
+#PGPASSWORD="${dbPassword}" psql -h localhost -U "${dbUser}" -d "${nextcloudDatabase}" -c "CREATE DATABASE \"${nextcloudDatabase}\";"
 echo "Done"
 echo
 
 echo "Restoring backup DB..."
+# MySQL/MariaDB:
 mysql -h localhost -u "${dbUser}" -p"${dbPassword}" "${nextcloudDatabase}" < "${currentRestoreDir}/${fileNameBackupDb}"
+
+# PostgreSQL (uncomment if you are using PostgreSQL as Nextcloud database)
+#PGPASSWORD="${dbPassword}" pg_restore -c -d "${nextcloudDatabase}" -h localhost -U "${dbUser}" "${currentRestoreDir}/${fileNameBackupDb}"
 echo "Done"
 echo
 

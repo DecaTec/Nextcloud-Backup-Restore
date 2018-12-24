@@ -123,7 +123,11 @@ echo
 # Backup DB
 #
 echo "Backup Nextcloud database..."
+# MySQL/MariaDB:
 mysqldump --single-transaction -h localhost -u "${dbUser}" -p"${dbPassword}" "${nextcloudDatabase}" > "${backupdir}/${fileNameBackupDb}"
+
+# PostgreSQL (uncomment if you are using PostgreSQL as Nextcloud database)
+#PGPASSWORD="${dbPassword}" pg_dump "${nextcloudDatabase}" -h localhost -U "${dbUser}" -f "${backupdir}/${fileNameBackupDb}"
 echo "Done"
 echo
 
