@@ -125,7 +125,7 @@ echo "Dropping old Nextcloud DB..."
 mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "DROP DATABASE ${nextcloudDatabase}"
 
 # PostgreSQL (uncomment if you are using PostgreSQL as Nextcloud database)
-#PGPASSWORD="${dbPassword} psql -h localhost -U "${dbUser}" -d nextcloud -c "DROP DATABASE \"${nextcloudDatabase}\";"
+#PGPASSWORD="${dbPassword}" psql -h localhost -U "${dbUser}" -d nextcloud -c "DROP DATABASE \"${nextcloudDatabase}\";"
 echo "Done"
 echo
 
