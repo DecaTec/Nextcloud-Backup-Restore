@@ -2,7 +2,9 @@
 
 #
 # Bash script for creating backups of Nextcloud.
-# Usage: ./NextcloudBackup.sh
+# Usage:
+# 	- With backup directory specified in the script:  ./NextcloudBackup.sh
+# 	- With backup directory specified by parameter: ./NextcloudBackup.sh <BackupDirectory> (e.g. ./NextcloudBackup.sh /media/hdd/nextcloud_backup)
 #
 # The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-18-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
 #
@@ -18,29 +20,42 @@ backupMainDir=$1
 
 if [ -z "$backupMainDir" ]; then
 	# TODO: The directory where you store the Nextcloud backups (when not specified by args)
-    backupMainDir="/mnt/Share/NextcloudBackups"
+    backupMainDir="/media/hdd/nextcloud_backup"
 fi
 
 echo "Backup directory: $backupMainDir"
 
 currentDate=$(date +"%Y%m%d_%H%M%S")
+
 # The actual directory of the current backup - this is a subdirectory of the main directory above with a timestamp
 backupdir="${backupMainDir}/${currentDate}/"
+
 # TODO: The directory of your Nextcloud installation (this is a directory under your web root)
 nextcloudFileDir="/var/www/nextcloud"
+
 # TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)
 # If your data directory is located under Nextcloud's file directory (somewhere in the web root), the data directory should not be a separate part of the backup
 nextcloudDataDir="/var/nextcloud_data"
+
+# TODO: The directory of your Nextcloud's local external storage.
+# Uncomment if you use local external storage.
+#nextcloudLocalExternalDataDir="/var/nextcloud_external_data"
+
 # TODO: The service name of the web server. Used to start/stop web server (e.g. 'systemctl start <webserverServiceName>')
 webserverServiceName="nginx"
+
 # TODO: Your Nextcloud database name
 nextcloudDatabase="nextcloud_db"
+
 # TODO: Your Nextcloud database user
 dbUser="nextcloud_db_user"
+
 # TODO: The password of the Nextcloud database user
 dbPassword="mYpAsSw0rd"
+
 # TODO: Your web server user
 webserverUser="www-data"
+
 # TODO: The maximum number of backups to keep (when set to 0, all backups are kept)
 maxNrOfBackups=0
 
@@ -48,6 +63,10 @@ maxNrOfBackups=0
 # If you prefer other file names, you'll also have to change the NextcloudRestore.sh script.
 fileNameBackupFileDir="nextcloud-filedir.tar.gz"
 fileNameBackupDataDir="nextcloud-datadir.tar.gz"
+
+# TOOD: Uncomment if you use local external storage
+#fileNameBackupExternalDataDir="nextcloud-external-datadir.tar.gz"
+
 fileNameBackupDb="nextcloud-db.sql"
 
 # Function for error messages
@@ -114,17 +133,27 @@ echo "Done"
 echo
 
 #
-# Backup file and data directory
+# Backup file directory
 #
 echo "Creating backup of Nextcloud file directory..."
 tar -cpzf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
 echo "Done"
 echo
 
+#
+# Backup data directory
+#
 echo "Creating backup of Nextcloud data directory..."
 tar -cpzf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
 echo "Done"
 echo
+
+# Backup local external storage.
+# Uncomment if you use local external storage
+#echo "Creating backup of Nextcloud local external storage directory..."
+#tar -cpzf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
+#echo "Done"
+#echo
 
 #
 # Backup DB
