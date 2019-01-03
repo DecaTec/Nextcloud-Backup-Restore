@@ -3,7 +3,7 @@
 #
 # Bash script for restoring backups of Nextcloud.
 # Usage: ./NextcloudRestore.sh <BackupName> (e.g. ./NextcloudRestore.sh 20170910_132703)
-# 
+#
 # The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-18-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
 #
 
@@ -125,7 +125,7 @@ echo "Dropping old Nextcloud DB..."
 mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "DROP DATABASE ${nextcloudDatabase}"
 
 # PostgreSQL (uncomment if you are using PostgreSQL as Nextcloud database)
-#PGPASSWORD="${dbPassword}" psql -h localhost -U "${dbUser}" -d nextcloud -c "DROP DATABASE \"${nextcloudDatabase}\";"
+#sudo -u postgres psql -c "DROP DATABASE ${nextcloudDatabase};"
 echo "Done"
 echo
 
@@ -137,7 +137,7 @@ mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcl
 #mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase}"
 
 # PostgreSQL (uncomment if you are using PostgreSQL as Nextcloud database)
-#PGPASSWORD="${dbPassword}" psql -h localhost -U "${dbUser}" -d "${nextcloudDatabase}" -c "CREATE DATABASE \"${nextcloudDatabase}\";"
+#sudo -u postgres psql -c "CREATE DATABASE ${nextcloudDatabase} WITH OWNER ${dbUser} TEMPLATE template0 ENCODING \"UTF8\";"
 echo "Done"
 echo
 
@@ -146,7 +146,7 @@ echo "Restoring backup DB..."
 mysql -h localhost -u "${dbUser}" -p"${dbPassword}" "${nextcloudDatabase}" < "${currentRestoreDir}/${fileNameBackupDb}"
 
 # PostgreSQL (uncomment if you are using PostgreSQL as Nextcloud database)
-#PGPASSWORD="${dbPassword}" pg_restore -c -d "${nextcloudDatabase}" -h localhost -U "${dbUser}" "${currentRestoreDir}/${fileNameBackupDb}"
+#sudo -u postgres psql "${nextcloudDatabase}" < "${currentRestoreDir}/${fileNameBackupDb}"
 echo "Done"
 echo
 
