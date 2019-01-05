@@ -21,7 +21,7 @@ backupMainDir=$2
 
 if [ -z "$backupMainDir" ]; then
 	# TODO: The directory where you store the Nextcloud backups (when not specified by args)
-    backupMainDir="/mnt/hdd1/nextcloudb_ackups"
+    backupMainDir="/mnt/hdd1/nextcloudb_backup"
 fi
 
 echo "Backup directory: $backupMainDir"
@@ -70,10 +70,10 @@ errorecho() { cat <<< "$@" 1>&2; }
 #
 # Check if parameter given
 #
-if [ $# != "1" ]
+if [ $# != "1" ] | [ $# != "2" ]
 then
     errorecho "ERROR: No backup name to restore given!"
-	errorecho "Usage: NextcloudRestore.sh 'BackupDate'"
+    errorecho "Usage: NextcloudRestore.sh 'BackupDate' ['BackupDirectory']"
     exit 1
 fi
 
