@@ -68,11 +68,11 @@ fileNameBackupDb="nextcloud-db.sql"
 errorecho() { cat <<< "$@" 1>&2; }
 
 #
-# Check if parameter given
+# Check if parameter(s) given
 #
-if [ $# != "1" ] | [ $# != "2" ]
+if [ $# != "1" ] && [ $# != "2" ]
 then
-    errorecho "ERROR: No backup name to restore given!"
+    errorecho "ERROR: No backup name to restore given, or wrong number of parameters!"
     errorecho "Usage: NextcloudRestore.sh 'BackupDate' ['BackupDirectory']"
     exit 1
 fi
