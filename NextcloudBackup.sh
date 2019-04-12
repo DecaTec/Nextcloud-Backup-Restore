@@ -183,16 +183,16 @@ DisableMaintenanceMode
 #
 # Delete old backups
 #
-if (( ${maxNrOfBackups} != 0 ))
+if [ ${maxNrOfBackups} != 0 ]
 then
 	nrOfBackups=$(ls -l ${backupMainDir} | grep -c ^d)
 
-	if (( ${nrOfBackups} > ${maxNrOfBackups} ))
+	if [[ ${nrOfBackups} > ${maxNrOfBackups} ]]
 	then
 		echo "Removing old backups..."
-		ls -t ${backupMainDir} | tail -$(( nrOfBackups - maxNrOfBackups )) | while read dirToRemove; do
+		ls -t ${backupMainDir} | tail -$(( nrOfBackups - maxNrOfBackups )) | while read -r dirToRemove; do
 			echo "${dirToRemove}"
-			rm -r ${backupMainDir}/${dirToRemove}
+			rm -r "${backupMainDir}/${dirToRemove:?}"
 			echo "Done"
 			echo
 		done

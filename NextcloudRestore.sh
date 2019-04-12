@@ -99,9 +99,7 @@ fi
 # Set maintenance mode
 #
 echo "Set maintenance mode for Nextcloud..."
-cd "${nextcloudFileDir}"
-sudo -u "${webserverUser}" php occ maintenance:mode --on
-cd ~
+sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:mode --on
 echo "Done"
 echo
 
