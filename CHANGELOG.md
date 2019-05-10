@@ -9,5 +9,5 @@
 - Single quotes for variables.
 
 ### Restore
-- The commands for retoring the database are checked at the beginning of the script. Is the specific database system is not installed, the restore is cancelled.
+- The commands for restoring the database are checked at the beginning of the script. Is the specific database system is not installed, the restore is cancelled.
 - The default main backup directory now is the same as in the backup script.
