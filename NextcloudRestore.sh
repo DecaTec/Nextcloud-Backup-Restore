@@ -137,7 +137,7 @@ echo "Done"
 echo
 
 #
-# Delete old Nextcloud direcories
+# Delete old Nextcloud directories
 #
 
 # File directory
