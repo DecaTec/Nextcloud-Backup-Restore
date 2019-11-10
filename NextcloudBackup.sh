@@ -70,7 +70,7 @@ maxNrOfBackups=0
 fileNameBackupFileDir='nextcloud-filedir.tar.gz'
 fileNameBackupDataDir='nextcloud-datadir.tar.gz'
 
-# TOOD: Uncomment if you use local external storage
+# TODO: Uncomment if you use local external storage
 #fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
 
 fileNameBackupDb='nextcloud-db.sql'

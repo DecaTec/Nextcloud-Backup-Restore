@@ -65,7 +65,7 @@ dbPassword='mYpAsSw0rd'
 fileNameBackupFileDir='nextcloud-filedir.tar.gz'
 fileNameBackupDataDir='nextcloud-datadir.tar.gz'
 
-# TOOD: Uncomment if you use local external storage
+# TODO: Uncomment if you use local external storage
 #fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
 
 fileNameBackupDb='nextcloud-db.sql'
@@ -155,7 +155,7 @@ echo "Done"
 echo
 
 # Local external storage
-# TOOD: Uncomment if you use local external storage
+# TODO: Uncomment if you use local external storage
 #echo "Deleting old Nextcloud local external storage directory..."
 #rm -r "${nextcloudLocalExternalDataDir}"
 #mkdir -p "${nextcloudLocalExternalDataDir}"
@@ -179,7 +179,7 @@ echo "Done"
 echo
 
 # Local external storage
-# TOOD: Uncomment if you use local external storage
+# TODO: Uncomment if you use local external storage
 #echo "Restoring Nextcloud data directory..."
 #tar -xmpzf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
 #echo "Done"
@@ -238,7 +238,7 @@ echo
 echo "Setting directory permissions..."
 chown -R "${webserverUser}":"${webserverUser}" "${nextcloudFileDir}"
 chown -R "${webserverUser}":"${webserverUser}" "${nextcloudDataDir}"
-# TOOD: Uncomment if you use local external storage
+# TODO: Uncomment if you use local external storage
 #chown -R "${webserverUser}":"${webserverUser}" "${nextcloudLocalExternalDataDir}"
 echo "Done"
 echo
