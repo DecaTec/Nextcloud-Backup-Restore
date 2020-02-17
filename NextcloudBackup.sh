@@ -65,6 +65,10 @@ dbPassword='mYpAsSw0rd'
 # TODO: The maximum number of backups to keep (when set to 0, all backups are kept)
 maxNrOfBackups=0
 
+# TODO: Ignore updater's backup directory in the data directory to safe space
+# Set to true to ignore the backup directory
+ignoreUpdaterBackups=false
+
 # File names for backup files
 # If you prefer other file names, you'll also have to change the NextcloudRestore.sh script.
 fileNameBackupFileDir='nextcloud-filedir.tar.gz'
@@ -150,7 +154,14 @@ echo
 # Backup data directory
 #
 echo "Creating backup of Nextcloud data directory..."
-tar -cpzf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
+
+if [ "$ignoreUpdaterBackups" = true ] ; then
+        echo "Ignoring updater backup directory"
+        tar -cpzf "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
+else
+        tar -cpzf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
+fi
+
 echo "Done"
 echo
 
