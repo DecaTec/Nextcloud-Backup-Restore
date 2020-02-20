@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 1.0.0
+# Version 1.1.0
 #
 # Usage:
 # 	- With backup directory specified in the script:  ./NextcloudBackup.sh
@@ -25,8 +25,6 @@ if [ -z "$backupMainDir" ]; then
 	# TODO: The directory where you store the Nextcloud backups (when not specified by args)
     backupMainDir='/media/hdd/nextcloud_backup'
 fi
-
-echo "Backup directory: $backupMainDir"
 
 currentDate=$(date +"%Y%m%d_%H%M%S")
 
@@ -105,6 +103,11 @@ function CtrlC() {
 
 	exit 1
 }
+
+#
+# Print information
+#
+echo "Backup directory: ${backupMainDir}"
 
 #
 # Check for root
