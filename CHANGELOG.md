@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.0
+
+### Backup
+- New variable *ignoreUpdaterBackups*: When set to true, the backups of Nextcloud's updater are not included in the backups (default: *false*).
+
 ## 1.0.0
 
 ### General
