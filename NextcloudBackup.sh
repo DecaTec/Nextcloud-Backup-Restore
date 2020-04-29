@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 1.1.0
+# Version 1.1.1
 #
 # Usage:
 # 	- With backup directory specified in the script:  ./NextcloudBackup.sh
@@ -100,6 +100,11 @@ function CtrlC() {
 	else
 		echo "Maintenance mode still enabled."
 	fi
+
+	echo "Starting web server..."
+	systemctl start "${webserverServiceName}"
+	echo "Done"
+	echo
 
 	exit 1
 }
