@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.1
+- When a backup is cancelled, the webserver is restartet automatically.
+
 ## 1.1.0
 
 ### Backup
