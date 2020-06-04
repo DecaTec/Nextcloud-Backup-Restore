@@ -48,7 +48,7 @@ webserverServiceName='nginx'
 # TODO: Your web server user
 webserverUser='www-data'
 
-# TODO: The name of the database system (ome of: mysql, mariadb, postgresql)
+# TODO: The name of the database system (one of: mysql, mariadb, postgresql)
 databaseSystem='mariadb'
 
 # TODO: Your Nextcloud database name
@@ -63,7 +63,7 @@ dbPassword='mYpAsSw0rd'
 # TODO: The maximum number of backups to keep (when set to 0, all backups are kept)
 maxNrOfBackups=0
 
-# TODO: Ignore updater's backup directory in the data directory to safe space
+# TODO: Ignore updater's backup directory in the data directory to save space
 # Set to true to ignore the backup directory
 ignoreUpdaterBackups=false
 
@@ -199,7 +199,7 @@ elif [ "${databaseSystem,,}" = "postgresql" ]; then
 	echo "Backup Nextcloud database (PostgreSQL)..."
 
 	if ! [ -x "$(command -v pg_dump)" ]; then
-		errorecho "ERROR:PostgreSQL not installed (command pg_dump not found)."
+		errorecho "ERROR: PostgreSQL not installed (command pg_dump not found)."
 		errorecho "ERROR: No backup of database possible!"
 	else
 		PGPASSWORD="${dbPassword}" pg_dump "${nextcloudDatabase}" -h localhost -U "${dbUser}" -f "${backupdir}/${fileNameBackupDb}"

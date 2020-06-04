@@ -48,7 +48,7 @@ webserverServiceName='nginx'
 # TODO: Your web server user
 webserverUser='www-data'
 
-# TODO: The name of the database system (ome of: mysql, mariadb, postgresql)
+# TODO: The name of the database system (one of: mysql, mariadb, postgresql)
 databaseSystem='mariadb'
 
 # TODO: Your Nextcloud database name
@@ -244,7 +244,7 @@ echo "Done"
 echo
 
 #
-# Update the system data-fingerprint (see https://docs.nextcloud.com/server/16/admin_manual/configuration_server/occ_command.html#maintenance-commands-label)
+# Update the system data-fingerprint (see https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/occ_command.html#maintenance-commands-label)
 #
 echo "Updating the system data-fingerprint..."
 sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:data-fingerprint
