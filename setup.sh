@@ -1,6 +1,25 @@
 #!/bin/bash
 
 #
+# Bash script an easy setup of NextcloudBackup.sh and NextcloudRestore.sh
+#
+# Version 2.0.0
+#
+# Usage:
+# 	- call the setup.sh script
+#   - Enter the required information
+#   - You NextcloudBackup.sh and NextcloudRestore.sh scripts will be tailored to match you installation.
+#
+# The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-18-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
+#
+
+#
+# IMPORTANT
+# The setup.sh script automated the configuration for the backup/restore scripts.
+# However, you should always check the backup/restore scripts BEFORE executing these!
+#
+
+#
 # Pre defined variables
 #
 backupMainDir='/media/hdd/nextcloud_backup'
