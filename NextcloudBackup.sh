@@ -195,7 +195,7 @@ if [ "${databaseSystem,,}" = "mysql" ] || [ "${databaseSystem,,}" = "mariadb" ];
 
 	echo "Done"
 	echo
-elif [ "${databaseSystem,,}" = "postgresql" ]; then
+elif [ "${databaseSystem,,}" = "postgresql" ] || [ "${databaseSystem,,}" = "pgsql" ]; then
 	echo "Backup Nextcloud database (PostgreSQL)..."
 
 	if ! [ -x "$(command -v pg_dump)" ]; then

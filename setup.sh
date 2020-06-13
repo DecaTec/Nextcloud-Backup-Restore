@@ -25,24 +25,45 @@
 backupMainDir='/media/hdd/nextcloud_backup'
 nextcloudFileDir='/var/www/nextcloud'
 webserverUser='www-data'
+webserverServiceName='nginx'
 
 #
 # Gather information
 #
-read -p "In which directory the backups should be saved (default: ${backupMainDir}). Enter a directory or press ENTER if the backup directory should be ${backupMainDir}: " BACKUPMAINDIR
+clear
+
+echo "Enter the directory to which the backups should be saved."
+echo "Default: ${backupMainDir}"
+echo ""
+read -p "Enter a directory or press ENTER if the backup directory should be ${backupMainDir}: " BACKUPMAINDIR
 
 [ -z "$BACKUPMAINDIR" ] ||  backupMainDir=$BACKUPMAINDIR
+clear
 
-read -p "Enter the path to the Nextcloud file directory (usually ${nextcloudFileDir}). Enter a directory or press ENTER if the file directory is ${nextcloudFileDir}: " NEXTCLOUDFILEDIRECTORY
+echo "Enter the path to the Nextcloud file directory."
+echo "Usually: ${nextcloudFileDir}"
+echo ""
+read -p "Enter a directory or press ENTER if the file directory is ${nextcloudFileDir}: " NEXTCLOUDFILEDIRECTORY
 
 [ -z "$NEXTCLOUDFILEDIRECTORY" ] ||  nextcloudFileDir=$NEXTCLOUDFILEDIRECTORY
+clear
 
-read -p "Enter the webserver user (usually ${webserverUser}). Enter an new user or press ENTER if the webserver user is ${webserverUser}: " WEBSERVERUSER
+echo "Enter the webserver user."
+echo "Usually: ${webserverUser}"
+echo ""
+read -p "Enter an new user or press ENTER if the webserver user is ${webserverUser}: " WEBSERVERUSER
 
 [ -z "$WEBSERVERUSER" ] ||  webserverUser=$WEBSERVERUSER
+clear
 
+echo "Enter the webserver service name."
+echo "Usually: nginx or apache2"
 echo ""
-echo ""
+read -p "Enter an new webserver service name or press ENTER if the webserver user is ${webserverUser}: " WEBSERVERSERVICENAME
+
+[ -z "$WEBSERVERSERVICENAME" ] ||  webserverServiceName=$WEBSERVERSERVICENAME
+clear
+
 echo "Backup directory: ${backupMainDir}"
 echo "Nextcloud file directory: ${nextcloudFileDir}"
 echo "Webserver user: ${webserverUser}"
@@ -93,6 +114,8 @@ sed -i "s@^nextcloudDataDir=.*@nextcloudDataDir='$nextcloudDataDir'@" ./Nextclou
 sed -i "s@^nextcloudDataDir=.*@nextcloudDataDir='$nextcloudDataDir'@" ./NextcloudRestore.sh
 
 # Webserver service name
+sed -i "s/^webserverServiceName.*/webserverServiceName='$webserverServiceName'/" ./NextcloudBackup.sh
+sed -i "s/^webserverServiceName.*/webserverServiceName='$webserverServiceName'/" ./NextcloudRestore.sh
 
 # Webserver user
 sed -i "s/^webserverUser.*/webserverUser='$webserverUser'/" ./NextcloudBackup.sh
@@ -100,6 +123,11 @@ sed -i "s/^webserverUser.*/webserverUser='$webserverUser'/" ./NextcloudRestore.s
 
 # Database system
 databaseSystem=$(occ_get dbtype)
+
+# PostgreSQL is identified as pgsql
+if [ "${databaseSystem,,}" = "pgsql" ]; then 
+  databaseSystem='postgresql'; 
+fi
 
 sed -i "s/^databaseSystem.*/databaseSystem='$databaseSystem'/" ./NextcloudBackup.sh
 sed -i "s/^databaseSystem.*/databaseSystem='$databaseSystem'/" ./NextcloudRestore.sh
