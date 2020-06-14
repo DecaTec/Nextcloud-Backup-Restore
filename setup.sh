@@ -59,7 +59,7 @@ clear
 echo "Enter the webserver service name."
 echo "Usually: nginx or apache2"
 echo ""
-read -p "Enter an new webserver service name or press ENTER if the webserver user is ${webserverServiceName}: " WEBSERVERSERVICENAME
+read -p "Enter an new webserver service name or press ENTER if the webserver service name is ${webserverServiceName}: " WEBSERVERSERVICENAME
 
 [ -z "$WEBSERVERSERVICENAME" ] ||  webserverServiceName=$WEBSERVERSERVICENAME
 clear
