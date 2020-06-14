@@ -59,7 +59,7 @@ clear
 echo "Enter the webserver service name."
 echo "Usually: nginx or apache2"
 echo ""
-read -p "Enter an new webserver service name or press ENTER if the webserver user is ${webserverUser}: " WEBSERVERSERVICENAME
+read -p "Enter an new webserver service name or press ENTER if the webserver user is ${webserverServiceName}: " WEBSERVERSERVICENAME
 
 [ -z "$WEBSERVERSERVICENAME" ] ||  webserverServiceName=$WEBSERVERSERVICENAME
 clear
@@ -67,6 +67,7 @@ clear
 echo "Backup directory: ${backupMainDir}"
 echo "Nextcloud file directory: ${nextcloudFileDir}"
 echo "Webserver user: ${webserverUser}"
+echo "Webserver service name: ${webserverServiceName}"
 echo ""
 read -p "Is the information correct? [y/N] " CORRECTINFO
 
