@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 1.1.1
+# Version 2.0.0
 #
 # Usage:
 # 	- With backup directory specified in the script:  ./NextcloudBackup.sh
@@ -195,7 +195,7 @@ if [ "${databaseSystem,,}" = "mysql" ] || [ "${databaseSystem,,}" = "mariadb" ];
 
 	echo "Done"
 	echo
-elif [ "${databaseSystem,,}" = "postgresql" ]; then
+elif [ "${databaseSystem,,}" = "postgresql" ] || [ "${databaseSystem,,}" = "pgsql" ]; then
 	echo "Backup Nextcloud database (PostgreSQL)..."
 
 	if ! [ -x "$(command -v pg_dump)" ]; then
