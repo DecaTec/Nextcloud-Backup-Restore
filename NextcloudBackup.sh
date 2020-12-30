@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 2.0.0
+# Version 2.1.0
 #
 # Usage:
 # 	- With backup directory specified in the script:  ./NextcloudBackup.sh
@@ -30,6 +30,12 @@ currentDate=$(date +"%Y%m%d_%H%M%S")
 
 # The actual directory of the current backup - this is a subdirectory of the main directory above with a timestamp
 backupdir="${backupMainDir}/${currentDate}/"
+
+# TODO: Use compression for Matrix Synapse installation/lib dir
+# When this is the only script for backups, it's recommend to enable compression.
+# If the output of this script is used in another (compressing) backup (e.g. borg backup), 
+# you should probably disable compression here and only enable compression of your main backup script.
+useCompression=true
 
 # TODO: The directory of your Nextcloud installation (this is a directory under your web root)
 nextcloudFileDir='/var/www/nextcloud'
@@ -69,11 +75,20 @@ ignoreUpdaterBackups=false
 
 # File names for backup files
 # If you prefer other file names, you'll also have to change the NextcloudRestore.sh script.
-fileNameBackupFileDir='nextcloud-filedir.tar.gz'
-fileNameBackupDataDir='nextcloud-datadir.tar.gz'
+fileNameBackupFileDir='nextcloud-filedir.tar'
+fileNameBackupDataDir='nextcloud-datadir.tar'
+
+if [ "$useCompression" = true ] ; then
+	fileNameBackupFileDir='nextcloud-filedir.tar.gz'
+	fileNameBackupDataDir='nextcloud-datadir.tar.gz'
+fi
 
 # TODO: Uncomment if you use local external storage
-#fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
+#fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
+#
+#if [ "$useCompression" = true ] ; then
+#	fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
+#fi
 
 fileNameBackupDb='nextcloud-db.sql'
 
@@ -154,7 +169,13 @@ echo
 # Backup file directory
 #
 echo "Creating backup of Nextcloud file directory..."
-tar -cpzf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
+
+if [ "$useCompression" = true ] ; then
+	tar -cpzf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
+else
+	tar -cpf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
+fi
+
 echo "Done"
 echo
 
@@ -164,10 +185,19 @@ echo
 echo "Creating backup of Nextcloud data directory..."
 
 if [ "$ignoreUpdaterBackups" = true ] ; then
-        echo "Ignoring updater backup directory"
-        tar -cpzf "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
+	echo "Ignoring updater backup directory"
+
+	if [ "$useCompression" = true ] ; then
+		tar -cpzf "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
+	else
+		tar -cpf "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
+	fi
 else
+	if [ "$useCompression" = true ] ; then
         tar -cpzf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
+	else
+		tar -cpf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
+	fi
 fi
 
 echo "Done"
@@ -176,7 +206,13 @@ echo
 # Backup local external storage.
 # Uncomment if you use local external storage
 #echo "Creating backup of Nextcloud local external storage directory..."
-#tar -cpzf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
+
+#if [ "$useCompression" = true ] ; then
+#	tar -cpzf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
+#else
+#	tar -cpf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
+#fi
+
 #echo "Done"
 #echo
 
