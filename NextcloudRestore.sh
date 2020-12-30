@@ -3,7 +3,7 @@
 #
 # Bash script for restoring backups of Nextcloud.
 #
-# Version 2.0.0
+# Version 2.1.0
 #
 # Usage:
 #   - With backup directory specified in the script: ./NextcloudRestore.sh <BackupName> (e.g. ./NextcloudRestore.sh 20170910_132703)
@@ -28,6 +28,9 @@ if [ -z "$backupMainDir" ]; then
 fi
 
 echo "Backup directory: $backupMainDir"
+
+# TODO: Set this to true, if the backup was created with compression enabled, otherwiese false.
+useCompression=true
 
 currentRestoreDir="${backupMainDir}/${restore}"
 
@@ -62,11 +65,20 @@ dbPassword='mYpAsSw0rd'
 
 # File names for backup files
 # If you prefer other file names, you'll also have to change the NextcloudBackup.sh script.
-fileNameBackupFileDir='nextcloud-filedir.tar.gz'
-fileNameBackupDataDir='nextcloud-datadir.tar.gz'
+fileNameBackupFileDir='nextcloud-filedir.tar'
+fileNameBackupDataDir='nextcloud-datadir.tar'
+
+if [ "$useCompression" = true ] ; then
+    fileNameBackupFileDir='nextcloud-filedir.tar.gz'
+    fileNameBackupDataDir='nextcloud-datadir.tar.gz'
+fi
 
 # TODO: Uncomment if you use local external storage
-#fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
+#fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
+#
+#if [ "$useCompression" = true ] ; then
+#    fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
+#fi
 
 fileNameBackupDb='nextcloud-db.sql'
 
@@ -168,20 +180,38 @@ echo
 
 # File directory
 echo "Restoring Nextcloud file directory..."
-tar -xmpzf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
+
+if [ "$useCompression" = true ] ; then
+    tar -xmpzf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
+else
+    tar -xmpf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
+fi
+
 echo "Done"
 echo
 
 # Data directory
 echo "Restoring Nextcloud data directory..."
-tar -xmpzf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
+
+if [ "$useCompression" = true ] ; then
+    tar -xmpzf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
+else
+    tar -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
+fi
+
 echo "Done"
 echo
 
 # Local external storage
 # TODO: Uncomment if you use local external storage
 #echo "Restoring Nextcloud data directory..."
-#tar -xmpzf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
+#
+#if [ "$useCompression" = true ] ; then
+#    tar -xmpzf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
+#else
+#    tar -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
+#fi
+#
 #echo "Done"
 #echo
 
