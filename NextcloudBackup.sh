@@ -206,6 +206,7 @@ echo
 # Backup local external storage.
 # Uncomment if you use local external storage
 #echo "Creating backup of Nextcloud local external storage directory..."
+
 #if [ "$useCompression" = true ] ; then
 #	tar -cpzf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
 #else
