@@ -1,6 +1,19 @@
 # Changelog
 
+## 2.1.0
+
+### General
+- Added a variable *useCompression* to use compression (.tar.gz) for file and data directory (enabled by default, this was also the default behavior before this option was implemented). 
+- You can disable compression of these directories (.tar) if you use some other (archiving) backup mechanism which utilizes the Nextcloud backup and restore scripts (e.g. Borg Backup, see here: https://codeberg.org/DecaTec/Linux-Server-Backup)
+
+## 2.0.0
+
+### General
+- Added script (`setup.sh`) for an (more or less) automated setup of the backup and restore scripts (utilizing OCC in order to gather information about Nextcloud instance).
+
 ## 1.1.1
+
+### Backup
 - When a backup is cancelled, the webserver is restartet automatically.
 
 ## 1.1.0
