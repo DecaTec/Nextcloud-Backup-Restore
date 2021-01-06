@@ -24,6 +24,8 @@ backupMainDir=$1
 if [ -z "$backupMainDir" ]; then
 	# TODO: The directory where you store the Nextcloud backups (when not specified by args)
     backupMainDir='/media/hdd/nextcloud_backup'
+else
+	backupMainDir=$(echo $backupMainDir | sed 's:/*$::')
 fi
 
 currentDate=$(date +"%Y%m%d_%H%M%S")
