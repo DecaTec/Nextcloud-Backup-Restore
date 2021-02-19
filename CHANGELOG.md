@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.1
+
+### Backup
+- Optimized cleaning up of old backups.
+
 ## 2.1.0
 
 ### General

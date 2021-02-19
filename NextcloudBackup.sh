@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 2.1.0
+# Version 2.1.1
 #
 # Usage:
 # 	- With backup directory specified in the script:  ./NextcloudBackup.sh
@@ -267,7 +267,7 @@ if [ ${maxNrOfBackups} != 0 ]
 then
 	nrOfBackups=$(ls -l ${backupMainDir} | grep -c ^d)
 
-	if [[ ${nrOfBackups} > ${maxNrOfBackups} ]]
+	if [ ${nrOfBackups} -gt ${maxNrOfBackups} ]
 	then
 		echo "Removing old backups..."
 		ls -t ${backupMainDir} | tail -$(( nrOfBackups - maxNrOfBackups )) | while read -r dirToRemove; do
