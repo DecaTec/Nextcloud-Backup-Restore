@@ -33,7 +33,7 @@ currentDate=$(date +"%Y%m%d_%H%M%S")
 # The actual directory of the current backup - this is a subdirectory of the main directory above with a timestamp
 backupdir="${backupMainDir}/${currentDate}/"
 
-# TODO: Use compression for Matrix Synapse installation/lib dir
+# TODO: Use compression for file/data dir
 # When this is the only script for backups, it's recommend to enable compression.
 # If the output of this script is used in another (compressing) backup (e.g. borg backup), 
 # you should probably disable compression here and only enable compression of your main backup script.
