@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 2.1.1
+# Version 2.1.2
 #
 # Usage:
 # 	- With backup directory specified in the script:  ./NextcloudBackup.sh
@@ -173,7 +173,7 @@ echo
 echo "Creating backup of Nextcloud file directory..."
 
 if [ "$useCompression" = true ] ; then
-	tar -cpzf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
+	tar -I pigz -cpf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
 else
 	tar -cpf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
 fi
@@ -190,13 +190,13 @@ if [ "$ignoreUpdaterBackups" = true ] ; then
 	echo "Ignoring updater backup directory"
 
 	if [ "$useCompression" = true ] ; then
-		tar -cpzf "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
+		tar -I pigz -cpf "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
 	else
 		tar -cpf "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
 	fi
 else
 	if [ "$useCompression" = true ] ; then
-        tar -cpzf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
+        tar -I pigz -cpf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
 	else
 		tar -cpf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
 	fi
@@ -210,7 +210,7 @@ echo
 #echo "Creating backup of Nextcloud local external storage directory..."
 
 #if [ "$useCompression" = true ] ; then
-#	tar -cpzf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
+#	tar -I pigz -cpf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
 #else
 #	tar -cpf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
 #fi

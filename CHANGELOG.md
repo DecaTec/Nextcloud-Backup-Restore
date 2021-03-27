@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.2
+
+### General
+- User pigz for compression.
+
 ## 2.1.1
 
 ### Backup

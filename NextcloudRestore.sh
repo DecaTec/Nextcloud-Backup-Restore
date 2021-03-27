@@ -3,7 +3,7 @@
 #
 # Bash script for restoring backups of Nextcloud.
 #
-# Version 2.1.1
+# Version 2.1.2
 #
 # Usage:
 #   - With backup directory specified in the script: ./NextcloudRestore.sh <BackupName> (e.g. ./NextcloudRestore.sh 20170910_132703)
@@ -182,7 +182,7 @@ echo
 echo "Restoring Nextcloud file directory..."
 
 if [ "$useCompression" = true ] ; then
-    tar -xmpzf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
+    tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
 else
     tar -xmpf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
 fi
@@ -194,7 +194,7 @@ echo
 echo "Restoring Nextcloud data directory..."
 
 if [ "$useCompression" = true ] ; then
-    tar -xmpzf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
+    tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
 else
     tar -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
 fi
@@ -207,7 +207,7 @@ echo
 #echo "Restoring Nextcloud data directory..."
 #
 #if [ "$useCompression" = true ] ; then
-#    tar -xmpzf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
+#    tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
 #else
 #    tar -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
 #fi
