@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 2.1.2
+# Version 2.1.3
 #
 # Usage:
 # 	- With backup directory specified in the script:  ./NextcloudBackup.sh
@@ -98,7 +98,7 @@ fileNameBackupDb='nextcloud-db.sql'
 errorecho() { cat <<< "$@" 1>&2; }
 
 function DisableMaintenanceMode() {
-	echo "Switching off maintenance mode..."
+	echo "$(date +"%H:%M:%S"): Switching off maintenance mode..."
 	sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:mode --off
 	echo "Done"
 	echo
@@ -154,7 +154,7 @@ fi
 #
 # Set maintenance mode
 #
-echo "Set maintenance mode for Nextcloud..."
+echo "$(date +"%H:%M:%S"): Set maintenance mode for Nextcloud..."
 sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:mode --on
 echo "Done"
 echo
@@ -162,7 +162,7 @@ echo
 #
 # Stop web server
 #
-echo "Stopping web server..."
+echo "$(date +"%H:%M:%S"): Stopping web server..."
 systemctl stop "${webserverServiceName}"
 echo "Done"
 echo
@@ -170,7 +170,7 @@ echo
 #
 # Backup file directory
 #
-echo "Creating backup of Nextcloud file directory..."
+echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud file directory..."
 
 if [ "$useCompression" = true ] ; then
 	tar -I pigz -cpf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
@@ -184,7 +184,7 @@ echo
 #
 # Backup data directory
 #
-echo "Creating backup of Nextcloud data directory..."
+echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud data directory..."
 
 if [ "$ignoreUpdaterBackups" = true ] ; then
 	echo "Ignoring updater backup directory"
@@ -207,7 +207,7 @@ echo
 
 # Backup local external storage.
 # Uncomment if you use local external storage
-#echo "Creating backup of Nextcloud local external storage directory..."
+#echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud local external storage directory..."
 
 #if [ "$useCompression" = true ] ; then
 #	tar -I pigz -cpf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
@@ -222,7 +222,7 @@ echo
 # Backup DB
 #
 if [ "${databaseSystem,,}" = "mysql" ] || [ "${databaseSystem,,}" = "mariadb" ]; then
-  	echo "Backup Nextcloud database (MySQL/MariaDB)..."
+  	echo "$(date +"%H:%M:%S"): Backup Nextcloud database (MySQL/MariaDB)..."
 
 	if ! [ -x "$(command -v mysqldump)" ]; then
 		errorecho "ERROR: MySQL/MariaDB not installed (command mysqldump not found)."
@@ -234,7 +234,7 @@ if [ "${databaseSystem,,}" = "mysql" ] || [ "${databaseSystem,,}" = "mariadb" ];
 	echo "Done"
 	echo
 elif [ "${databaseSystem,,}" = "postgresql" ] || [ "${databaseSystem,,}" = "pgsql" ]; then
-	echo "Backup Nextcloud database (PostgreSQL)..."
+	echo "$(date +"%H:%M:%S"): Backup Nextcloud database (PostgreSQL)..."
 
 	if ! [ -x "$(command -v pg_dump)" ]; then
 		errorecho "ERROR: PostgreSQL not installed (command pg_dump not found)."
@@ -250,7 +250,7 @@ fi
 #
 # Start web server
 #
-echo "Starting web server..."
+echo "$(date +"%H:%M:%S"): Starting web server..."
 systemctl start "${webserverServiceName}"
 echo "Done"
 echo
@@ -269,7 +269,7 @@ then
 
 	if [ ${nrOfBackups} -gt ${maxNrOfBackups} ]
 	then
-		echo "Removing old backups..."
+		echo "$(date +"%H:%M:%S"): Removing old backups..."
 		ls -t ${backupMainDir} | tail -$(( nrOfBackups - maxNrOfBackups )) | while read -r dirToRemove; do
 			echo "${dirToRemove}"
 			rm -r "${backupMainDir}/${dirToRemove:?}"
@@ -281,4 +281,4 @@ fi
 
 echo
 echo "DONE!"
-echo "Backup created: ${backupdir}"
+echo "$(date +"%H:%M:%S"): Backup created: ${backupdir}"

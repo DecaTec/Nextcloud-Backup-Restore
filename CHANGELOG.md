@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.3
+
+### General
+- Added timestamps for every step.
+
 ## 2.1.2
 
 ### General

@@ -3,7 +3,7 @@
 #
 # Bash script for restoring backups of Nextcloud.
 #
-# Version 2.1.2
+# Version 2.1.3
 #
 # Usage:
 #   - With backup directory specified in the script: ./NextcloudRestore.sh <BackupName> (e.g. ./NextcloudRestore.sh 20170910_132703)
@@ -135,7 +135,7 @@ fi
 #
 # Set maintenance mode
 #
-echo "Set maintenance mode for Nextcloud..."
+echo "$(date +"%H:%M:%S"): Set maintenance mode for Nextcloud..."
 sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:mode --on
 echo "Done"
 echo
@@ -143,7 +143,7 @@ echo
 #
 # Stop web server
 #
-echo "Stopping web server..."
+echo "$(date +"%H:%M:%S"): Stopping web server..."
 systemctl stop "${webserverServiceName}"
 echo "Done"
 echo
@@ -153,14 +153,14 @@ echo
 #
 
 # File directory
-echo "Deleting old Nextcloud file directory..."
+echo "$(date +"%H:%M:%S"): Deleting old Nextcloud file directory..."
 rm -r "${nextcloudFileDir}"
 mkdir -p "${nextcloudFileDir}"
 echo "Done"
 echo
 
 # Data directory
-echo "Deleting old Nextcloud data directory..."
+echo "$(date +"%H:%M:%S"): Deleting old Nextcloud data directory..."
 rm -r "${nextcloudDataDir}"
 mkdir -p "${nextcloudDataDir}"
 echo "Done"
@@ -179,7 +179,7 @@ echo
 #
 
 # File directory
-echo "Restoring Nextcloud file directory..."
+echo "$(date +"%H:%M:%S"): Restoring Nextcloud file directory..."
 
 if [ "$useCompression" = true ] ; then
     tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
@@ -191,7 +191,7 @@ echo "Done"
 echo
 
 # Data directory
-echo "Restoring Nextcloud data directory..."
+echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
 
 if [ "$useCompression" = true ] ; then
     tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
@@ -204,7 +204,7 @@ echo
 
 # Local external storage
 # TODO: Uncomment if you use local external storage
-#echo "Restoring Nextcloud data directory..."
+#echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
 #
 #if [ "$useCompression" = true ] ; then
 #    tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
@@ -218,7 +218,7 @@ echo
 #
 # Restore database
 #
-echo "Dropping old Nextcloud DB..."
+echo "$(date +"%H:%M:%S"): Dropping old Nextcloud DB..."
 
 if [ "${databaseSystem,,}" = "mysql" ] || [ "${databaseSystem,,}" = "mariadb" ]; then
     mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "DROP DATABASE ${nextcloudDatabase}"
@@ -229,7 +229,7 @@ fi
 echo "Done"
 echo
 
-echo "Creating new DB for Nextcloud..."
+echo "$(date +"%H:%M:%S"): Creating new DB for Nextcloud..."
 
 if [ "${databaseSystem,,}" = "mysql" ] || [ "${databaseSystem,,}" = "mariadb" ]; then
     # Use this if the databse from the backup uses UTF8 with multibyte support (e.g. for emoijs in filenames):
@@ -243,7 +243,7 @@ fi
 echo "Done"
 echo
 
-echo "Restoring backup DB..."
+echo "$(date +"%H:%M:%S"): Restoring backup DB..."
 
 if [ "${databaseSystem,,}" = "mysql" ] || [ "${databaseSystem,,}" = "mariadb" ]; then
 	mysql -h localhost -u "${dbUser}" -p"${dbPassword}" "${nextcloudDatabase}" < "${currentRestoreDir}/${fileNameBackupDb}"
@@ -257,7 +257,7 @@ echo
 #
 # Start web server
 #
-echo "Starting web server..."
+echo "$(date +"%H:%M:%S"): Starting web server..."
 systemctl start "${webserverServiceName}"
 echo "Done"
 echo
@@ -265,7 +265,7 @@ echo
 #
 # Set directory permissions
 #
-echo "Setting directory permissions..."
+echo "$(date +"%H:%M:%S"): Setting directory permissions..."
 chown -R "${webserverUser}":"${webserverUser}" "${nextcloudFileDir}"
 chown -R "${webserverUser}":"${webserverUser}" "${nextcloudDataDir}"
 # TODO: Uncomment if you use local external storage
@@ -276,7 +276,7 @@ echo
 #
 # Update the system data-fingerprint (see https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/occ_command.html#maintenance-commands-label)
 #
-echo "Updating the system data-fingerprint..."
+echo "$(date +"%H:%M:%S"): Updating the system data-fingerprint..."
 sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:data-fingerprint
 echo "Done"
 echo
@@ -284,11 +284,11 @@ echo
 #
 # Disbale maintenance mode
 #
-echo "Switching off maintenance mode..."
+echo "$(date +"%H:%M:%S"): Switching off maintenance mode..."
 sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:mode --off
 echo "Done"
 echo
 
 echo
 echo "DONE!"
-echo "Backup ${restore} successfully restored."
+echo "$(date +"%H:%M:%S"): Backup ${restore} successfully restored."
