@@ -23,7 +23,7 @@ backupMainDir=$1
 
 if [ -z "$backupMainDir" ]; then
 	# TODO: The directory where you store the Nextcloud backups (when not specified by args)
-    backupMainDir='/media/hdd/nextcloud_backup'
+	backupMainDir='/media/hdd/nextcloud_backup'
 else
 	backupMainDir=$(echo $backupMainDir | sed 's:/*$::')
 fi
@@ -85,12 +85,15 @@ if [ "$useCompression" = true ] ; then
 	fileNameBackupDataDir='nextcloud-datadir.tar.gz'
 fi
 
-# TODO: Uncomment if you use local external storage
-#fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
-#
-#if [ "$useCompression" = true ] ; then
-#	fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
-#fi
+fileNameBackupExternalDataDir=''
+
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+	fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
+
+	if [ "$useCompression" = true ] ; then
+		fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
+	fi
+fi
 
 fileNameBackupDb='nextcloud-db.sql'
 
@@ -205,18 +208,21 @@ fi
 echo "Done"
 echo
 
+#
 # Backup local external storage.
-# Uncomment if you use local external storage
-#echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud local external storage directory..."
+#
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+	echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud local external storage directory..."
 
-#if [ "$useCompression" = true ] ; then
-#	tar -I pigz -cpf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
-#else
-#	tar -cpf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
-#fi
+	if [ "$useCompression" = true ] ; then
+		tar -I pigz -cpf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
+	else
+		tar -cpf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
+	fi
 
-#echo "Done"
-#echo
+	echo "Done"
+	echo
+fi
 
 #
 # Backup DB
