@@ -63,6 +63,9 @@ dbUser='nextcloud_db_user'
 # TODO: The password of the Nextcloud database user
 dbPassword='mYpAsSw0rd'
 
+# TODO: Uncomment this and set to true if the database from the backup DOES NOT use UTF8 with multibyte support (e.g. for emoijs in filenames)
+#dbNoMultibyte=true
+
 # File names for backup files
 # If you prefer other file names, you'll also have to change the NextcloudBackup.sh script.
 fileNameBackupFileDir='nextcloud-filedir.tar'
@@ -237,10 +240,13 @@ echo
 echo "$(date +"%H:%M:%S"): Creating new DB for Nextcloud..."
 
 if [ "${databaseSystem,,}" = "mysql" ] || [ "${databaseSystem,,}" = "mariadb" ]; then
-    # Use this if the databse from the backup uses UTF8 with multibyte support (e.g. for emoijs in filenames):
-    mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci"
-    # TODO: Use this if the database from the backup DOES NOT use UTF8 with multibyte support (e.g. for emoijs in filenames):
-    #mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase}"
+    if [ ! -z "${dbNoMultibyte+x}" ] && [ "${dbNoMultibyte}" = true ] ; then
+        # Database from the backup DOES NOT use UTF8 with multibyte support (e.g. for emoijs in filenames)
+        mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase}"
+    else
+        # Database from the backup uses UTF8 with multibyte support (e.g. for emoijs in filenames)
+        mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci"
+    fi
 elif [ "${databaseSystem,,}" = "postgresql" ] || [ "${databaseSystem,,}" = "pgsql" ]; then
     sudo -u postgres psql -c "CREATE DATABASE ${nextcloudDatabase} WITH OWNER ${dbUser} TEMPLATE template0 ENCODING \"UNICODE\";"
 fi
