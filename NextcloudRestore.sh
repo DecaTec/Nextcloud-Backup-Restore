@@ -73,12 +73,15 @@ if [ "$useCompression" = true ] ; then
     fileNameBackupDataDir='nextcloud-datadir.tar.gz'
 fi
 
-# TODO: Uncomment if you use local external storage
-#fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
-#
-#if [ "$useCompression" = true ] ; then
-#    fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
-#fi
+fileNameBackupExternalDataDir=''
+
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+    fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
+
+    if [ "$useCompression" = true ] ; then
+        fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
+    fi
+fi
 
 fileNameBackupDb='nextcloud-db.sql'
 
@@ -167,12 +170,13 @@ echo "Done"
 echo
 
 # Local external storage
-# TODO: Uncomment if you use local external storage
-#echo "Deleting old Nextcloud local external storage directory..."
-#rm -r "${nextcloudLocalExternalDataDir}"
-#mkdir -p "${nextcloudLocalExternalDataDir}"
-#echo "Done"
-#echo
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+    echo "Deleting old Nextcloud local external storage directory..."
+    rm -r "${nextcloudLocalExternalDataDir}"
+    mkdir -p "${nextcloudLocalExternalDataDir}"
+    echo "Done"
+    echo
+fi
 
 #
 # Restore file and data directory
@@ -203,17 +207,18 @@ echo "Done"
 echo
 
 # Local external storage
-# TODO: Uncomment if you use local external storage
-#echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
-#
-#if [ "$useCompression" = true ] ; then
-#    tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
-#else
-#    tar -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
-#fi
-#
-#echo "Done"
-#echo
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+    echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
+    
+    if [ "$useCompression" = true ] ; then
+        tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
+    else
+        tar -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
+    fi
+    
+    echo "Done"
+    echo
+fi
 
 #
 # Restore database
@@ -268,8 +273,11 @@ echo
 echo "$(date +"%H:%M:%S"): Setting directory permissions..."
 chown -R "${webserverUser}":"${webserverUser}" "${nextcloudFileDir}"
 chown -R "${webserverUser}":"${webserverUser}" "${nextcloudDataDir}"
-# TODO: Uncomment if you use local external storage
-#chown -R "${webserverUser}":"${webserverUser}" "${nextcloudLocalExternalDataDir}"
+
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+    chown -R "${webserverUser}":"${webserverUser}" "${nextcloudLocalExternalDataDir}"
+fi
+
 echo "Done"
 echo
 
