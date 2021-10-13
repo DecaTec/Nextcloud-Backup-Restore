@@ -211,7 +211,7 @@ echo
 
 # Local external storage
 if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
-    echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
+    echo "$(date +"%H:%M:%S"): Restoring Nextcloud local external storage directory..."
     
     if [ "$useCompression" = true ] ; then
         tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
