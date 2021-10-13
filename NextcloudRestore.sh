@@ -63,6 +63,9 @@ dbUser='nextcloud_db_user'
 # TODO: The password of the Nextcloud database user
 dbPassword='mYpAsSw0rd'
 
+# TODO: Uncomment this and set to true if the database from the backup DOES NOT use UTF8 with multibyte support (e.g. for emoijs in filenames)
+#dbNoMultibyte=true
+
 # File names for backup files
 # If you prefer other file names, you'll also have to change the NextcloudBackup.sh script.
 fileNameBackupFileDir='nextcloud-filedir.tar'
@@ -73,12 +76,15 @@ if [ "$useCompression" = true ] ; then
     fileNameBackupDataDir='nextcloud-datadir.tar.gz'
 fi
 
-# TODO: Uncomment if you use local external storage
-#fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
-#
-#if [ "$useCompression" = true ] ; then
-#    fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
-#fi
+fileNameBackupExternalDataDir=''
+
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+    fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
+
+    if [ "$useCompression" = true ] ; then
+        fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
+    fi
+fi
 
 fileNameBackupDb='nextcloud-db.sql'
 
@@ -167,12 +173,13 @@ echo "Done"
 echo
 
 # Local external storage
-# TODO: Uncomment if you use local external storage
-#echo "Deleting old Nextcloud local external storage directory..."
-#rm -r "${nextcloudLocalExternalDataDir}"
-#mkdir -p "${nextcloudLocalExternalDataDir}"
-#echo "Done"
-#echo
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+    echo "Deleting old Nextcloud local external storage directory..."
+    rm -r "${nextcloudLocalExternalDataDir}"
+    mkdir -p "${nextcloudLocalExternalDataDir}"
+    echo "Done"
+    echo
+fi
 
 #
 # Restore file and data directory
@@ -203,17 +210,18 @@ echo "Done"
 echo
 
 # Local external storage
-# TODO: Uncomment if you use local external storage
-#echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
-#
-#if [ "$useCompression" = true ] ; then
-#    tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
-#else
-#    tar -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
-#fi
-#
-#echo "Done"
-#echo
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+    echo "$(date +"%H:%M:%S"): Restoring Nextcloud local external storage directory..."
+    
+    if [ "$useCompression" = true ] ; then
+        tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
+    else
+        tar -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
+    fi
+    
+    echo "Done"
+    echo
+fi
 
 #
 # Restore database
@@ -232,10 +240,13 @@ echo
 echo "$(date +"%H:%M:%S"): Creating new DB for Nextcloud..."
 
 if [ "${databaseSystem,,}" = "mysql" ] || [ "${databaseSystem,,}" = "mariadb" ]; then
-    # Use this if the databse from the backup uses UTF8 with multibyte support (e.g. for emoijs in filenames):
-    mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci"
-    # TODO: Use this if the database from the backup DOES NOT use UTF8 with multibyte support (e.g. for emoijs in filenames):
-    #mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase}"
+    if [ ! -z "${dbNoMultibyte+x}" ] && [ "${dbNoMultibyte}" = true ] ; then
+        # Database from the backup DOES NOT use UTF8 with multibyte support (e.g. for emoijs in filenames)
+        mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase}"
+    else
+        # Database from the backup uses UTF8 with multibyte support (e.g. for emoijs in filenames)
+        mysql -h localhost -u "${dbUser}" -p"${dbPassword}" -e "CREATE DATABASE ${nextcloudDatabase} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci"
+    fi
 elif [ "${databaseSystem,,}" = "postgresql" ] || [ "${databaseSystem,,}" = "pgsql" ]; then
     sudo -u postgres psql -c "CREATE DATABASE ${nextcloudDatabase} WITH OWNER ${dbUser} TEMPLATE template0 ENCODING \"UNICODE\";"
 fi
@@ -268,8 +279,11 @@ echo
 echo "$(date +"%H:%M:%S"): Setting directory permissions..."
 chown -R "${webserverUser}":"${webserverUser}" "${nextcloudFileDir}"
 chown -R "${webserverUser}":"${webserverUser}" "${nextcloudDataDir}"
-# TODO: Uncomment if you use local external storage
-#chown -R "${webserverUser}":"${webserverUser}" "${nextcloudLocalExternalDataDir}"
+
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+    chown -R "${webserverUser}":"${webserverUser}" "${nextcloudLocalExternalDataDir}"
+fi
+
 echo "Done"
 echo
 
