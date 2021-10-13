@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.0
+
+### General
+- Better handling of external data directory: Backup/restore of external data direcrory is done automatically if the variable `nextcloudLocalExternalDataDir` is set.
+
 ## 2.1.3
 
 ### General

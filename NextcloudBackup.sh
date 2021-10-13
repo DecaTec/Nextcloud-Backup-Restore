@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 2.1.3
+# Version 2.2.0
 #
 # Usage:
 # 	- With backup directory specified in the script:  ./NextcloudBackup.sh
