@@ -3,7 +3,7 @@
 #
 # Bash script an easy setup of NextcloudBackup.sh and NextcloudRestore.sh
 #
-# Version 2.2.0
+# Version 2.3.0
 #
 # Usage:
 # 	- call the setup.sh script
@@ -18,6 +18,9 @@
 # The setup.sh script automated the configuration for the backup/restore scripts.
 # However, you should always check the backup/restore scripts BEFORE executing these!
 #
+
+# Make sure the script exits when any command fails
+set -Eeuo pipefail
 
 #
 # Pre defined variables
@@ -86,7 +89,7 @@ occ_get datadirectory
 
 if [ $? -ne 0 ]; then
     echo "Error calling OCC: Please check if the information provided was correct."
-	echo "ABORTING!"
+    echo "ABORTING!"
   	echo "No file has been altered."
   	exit 1
 fi

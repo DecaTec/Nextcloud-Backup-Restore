@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.3.0
+
+### General
+- The scripts now exit when any command fails.
+- Defined the command for compression in the "TODO section" of the script for easier customization.
+- Added section for setup in readme.
+- Updated links. 
+- Document requirement pigz when using compression.
+- Formatting.
+
+### Backup
+- Bugfix: Fixed the double trailing slash for paths containing the variable `backupdir`.
+
 ## 2.2.0
 
 ### General

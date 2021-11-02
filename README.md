@@ -14,6 +14,10 @@ For a complete backup of any Nextcloud instance, you'll have to backup these ite
 
 The scripts take care of these items to backup automatically.
 
+## Requirements
+
+- *pigz* (https://zlib.net/pigz/) when using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
+
 **Important:**
 
 - After cloning or downloading the repository, you'll have to edit the scripts so that they represent your current Nextcloud installation (directories, users, etc.). All values which need to be customized are marked with *TODO* in the script's comments.
@@ -22,6 +26,21 @@ The scripts take care of these items to backup automatically.
 - The scripts only backup the Nextcloud data directory and can backup a local external storage mounted into Nextcloud. If you have any other external storage mounted in Nextcloud (e.g. FTP), these files have to be handled separately.
 - The scripts support MariaDB/MySQL and PostgreSQL as database.
 - You should have enabled 4 byte support (see [Nextcloud Administration Manual](https://docs.nextcloud.com/server/latest/admin_manual/configuration_database/mysql_4byte_support.html)) on your Nextcloud database. Otherwise, when you have *not* enabled 4 byte support, you have to edit the restore script, so that the database is not created with 4 byte support enabled (variable `dbNoMultibyte`).
+
+## Setup
+
+1. Clone the repository: `git clone https://codeberg.org/DecaTec/Nextcloud-Backup-Restore.git`
+2. Set permissions:
+    - `chown -R root Nextcloud-Backup-Restore`
+    - `cd Nextcloud-Backup-Restore`
+    - `chmod 700 *.sh`
+3. Call the (interactive) script for automated setup (this will modify the scripts for backup/restore to fit your Nextcloud instance, see below): `./setup.sh`
+4. **Important**: Check the scripts `NextcloudBackup.sh` and `NextcloudRestore.sh` if everything was set up correctly (see *TODO* in the script's comments)
+5. Start using the scripts: See sections *Backup* and *Restore* below
+
+### Automated setup
+
+Next to the backup/restore scripts, there is another script (`setup.sh`). The setup script gathers some information and uses the [OCC command](https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/occ_command.html) in order to set the required variables in the backup/restore scripts automatically. This way, the configuration of the backup/restore scripts can be automated to some extend.
 
 ## Backup
 
@@ -37,7 +56,3 @@ You can also call this script by cron. Example (at 2am every night, with log out
 
 For restore, just call *NextcloudRestore.sh*. This script expects at least one parameter specifying the name of the backup to be restored. In our example, this would be *20170910_132703* (the time stamp of the backup created before). The full command for a restore would be *./NextcloudRestore.sh 20170910_132703*.
 You can also specify the main backup directory with a second parameter, e.g. *./NextcloudRestore.sh 20170910_132703 /media/hdd/nextcloud_backup*.
-
-## Automated setup
-
-Next to the backup/restore scripts, there is another script (`setup.sh`). The setup script gathers some information and uses the [OCC command](https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/occ_command.html) in order to set the required variables in the backup/restore scripts automatically. This way, the configuration of the backup/restore scripts can be automated to some extend.

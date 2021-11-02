@@ -3,13 +3,20 @@
 #
 # Bash script for restoring backups of Nextcloud.
 #
-# Version 2.2.0
+# Version 2.3.0
+#
+# Requirements:
+#	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
+#
+# Supported database systems:
+# 	- MySQL/MariaDB
+# 	- PostgreSQL
 #
 # Usage:
 #   - With backup directory specified in the script: ./NextcloudRestore.sh <BackupName> (e.g. ./NextcloudRestore.sh 20170910_132703)
 #   - With backup directory specified by parameter: ./NextcloudRestore.sh <BackupName> <BackupDirectory> (e.g. ./NextcloudRestore.sh 20170910_132703 /media/hdd/nextcloud_backup)
 #
-# The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-18-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
+# The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-20-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
 #
 
 #
@@ -17,6 +24,9 @@
 # You have to customize this script (directories, users, etc.) for your actual environment.
 # All entries which need to be customized are tagged with "TODO".
 #
+
+# Make sure the script exits when any command fails
+set -Eeuo pipefail
 
 # Variables
 restore=$1
@@ -29,10 +39,14 @@ fi
 
 echo "Backup directory: $backupMainDir"
 
+currentRestoreDir="${backupMainDir}/${restore}"
+
 # TODO: Set this to true, if the backup was created with compression enabled, otherwiese false.
 useCompression=true
 
-currentRestoreDir="${backupMainDir}/${restore}"
+# TOOD: The bare tar command for using compression.
+# Use 'tar -xmpzf' if you want to use gzip compression.
+compressionCommand="tar -I pigz -cpf"
 
 # TODO: The directory of your Nextcloud installation (this is a directory under your web root)
 nextcloudFileDir='/var/www/nextcloud'
@@ -189,7 +203,7 @@ fi
 echo "$(date +"%H:%M:%S"): Restoring Nextcloud file directory..."
 
 if [ "$useCompression" = true ] ; then
-    tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
+    `$compressionCommand "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"`
 else
     tar -xmpf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
 fi
@@ -201,7 +215,7 @@ echo
 echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
 
 if [ "$useCompression" = true ] ; then
-    tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
+    `$compressionCommand "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"`
 else
     tar -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
 fi
@@ -214,7 +228,7 @@ if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
     echo "$(date +"%H:%M:%S"): Restoring Nextcloud local external storage directory..."
     
     if [ "$useCompression" = true ] ; then
-        tar -I pigz -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
+        `$compressionCommand "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"`
     else
         tar -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
     fi

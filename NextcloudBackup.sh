@@ -3,13 +3,20 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 2.2.0
+# Version 2.3.0
+#
+# Requirements:
+#	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
+#
+# Supported database systems:
+# 	- MySQL/MariaDB
+# 	- PostgreSQL
 #
 # Usage:
 # 	- With backup directory specified in the script:  ./NextcloudBackup.sh
 # 	- With backup directory specified by parameter: ./NextcloudBackup.sh <BackupDirectory> (e.g. ./NextcloudBackup.sh /media/hdd/nextcloud_backup)
 #
-# The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-18-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
+# The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-20-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
 #
 
 #
@@ -17,6 +24,9 @@
 # You have to customize this script (directories, users, etc.) for your actual environment.
 # All entries which need to be customized are tagged with "TODO".
 #
+
+# Make sure the script exits when any command fails
+set -Eeuo pipefail
 
 # Variables
 backupMainDir=$1
@@ -31,13 +41,17 @@ fi
 currentDate=$(date +"%Y%m%d_%H%M%S")
 
 # The actual directory of the current backup - this is a subdirectory of the main directory above with a timestamp
-backupdir="${backupMainDir}/${currentDate}/"
+backupdir="${backupMainDir}/${currentDate}"
 
 # TODO: Use compression for file/data dir
 # When this is the only script for backups, it's recommend to enable compression.
 # If the output of this script is used in another (compressing) backup (e.g. borg backup), 
 # you should probably disable compression here and only enable compression of your main backup script.
 useCompression=true
+
+# TOOD: The bare tar command for using compression.
+# Use 'tar -cpzf' if you want to use gzip compression.
+compressionCommand="tar -I pigz -cpf"
 
 # TODO: The directory of your Nextcloud installation (this is a directory under your web root)
 nextcloudFileDir='/var/www/nextcloud'
@@ -176,7 +190,7 @@ echo
 echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud file directory..."
 
 if [ "$useCompression" = true ] ; then
-	tar -I pigz -cpf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
+	`$compressionCommand "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .`
 else
 	tar -cpf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
 fi
@@ -193,13 +207,13 @@ if [ "$ignoreUpdaterBackups" = true ] ; then
 	echo "Ignoring updater backup directory"
 
 	if [ "$useCompression" = true ] ; then
-		tar -I pigz -cpf "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
+		`$compressionCommand "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .`
 	else
 		tar -cpf "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
 	fi
 else
 	if [ "$useCompression" = true ] ; then
-        tar -I pigz -cpf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
+		`$compressionCommand "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .`
 	else
 		tar -cpf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
 	fi
@@ -215,7 +229,7 @@ if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
 	echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud local external storage directory..."
 
 	if [ "$useCompression" = true ] ; then
-		tar -I pigz -cpf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
+		`$compressionCommand "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .`
 	else
 		tar -cpf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
 	fi
