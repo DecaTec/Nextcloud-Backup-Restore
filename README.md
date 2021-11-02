@@ -18,7 +18,7 @@ The scripts take care of these items to backup automatically.
 
 - *pigz* (https://zlib.net/pigz/) when using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
 
-**Important:**
+## Important notes about using the scripts
 
 - After cloning or downloading the repository, you'll have to edit the scripts so that they represent your current Nextcloud installation (directories, users, etc.). All values which need to be customized are marked with *TODO* in the script's comments.
 - The scripts assume that Nextcloud's data directory is *not* a subdirectory of the Nextcloud installation (file directory). The general recommendation is that the data directory should not be located somewhere in the web folder of your webserver (usually */var/www/*), but in a different folder (e.g. */var/nextcloud_data*). For more information, see [here](https://docs.nextcloud.com/server/latest/admin_manual/installation/installation_wizard.html#data-directory-location-label).
