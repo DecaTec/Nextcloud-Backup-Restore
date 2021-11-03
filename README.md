@@ -1,3 +1,5 @@
+![release](https://img.shields.io/badge/dynamic/json.svg?label=release&url=https://codeberg.org/api/v1/repos/DecaTec/Nextcloud-Backup-Restore/releases&query=$[0].tag_name)
+
 # Nextcloud-Backup-Restore
 
 This repository contains two bash scripts for backup/restore of [Nextcloud](https://nextcloud.com/).
