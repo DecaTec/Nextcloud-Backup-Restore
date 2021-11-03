@@ -18,7 +18,7 @@ The scripts take care of these items to backup automatically.
 
 ## Requirements
 
-- *pigz* (https://zlib.net/pigz/) when using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
+- *pigz* (https://zlib.net/pigz/) when using backup compression. If not installed already, it can be installed with `apt install pigz` (Debian/Ubuntu). If not available, you can use another compression algorithm (e.g. gzip)
 
 ## Important notes about using the scripts
 
