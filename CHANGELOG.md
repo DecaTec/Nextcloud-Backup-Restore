@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.1
+
+### General
+- Bugfix: Unbound variable when no parameters are supplied
+
 ## 2.3.0
 
 ### General
