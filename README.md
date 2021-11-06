@@ -1,4 +1,4 @@
-![release](https://img.shields.io/badge/dynamic/json.svg?label=release&url=https://codeberg.org/api/v1/repos/DecaTec/Nextcloud-Backup-Restore/releases&query=$[0].tag_name)
+[![release](https://img.shields.io/badge/dynamic/json.svg?label=release&url=https://codeberg.org/api/v1/repos/DecaTec/Nextcloud-Backup-Restore/releases&query=$[0].tag_name)](https://codeberg.org/DecaTec/Nextcloud-Backup-Restore/releases)
 
 # Nextcloud-Backup-Restore
 
