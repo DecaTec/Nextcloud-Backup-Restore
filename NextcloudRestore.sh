@@ -3,7 +3,7 @@
 #
 # Bash script for restoring backups of Nextcloud.
 #
-# Version 2.3.1
+# Version 2.3.2
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
@@ -34,7 +34,7 @@ backupMainDir=${2:-}
 
 if [ -z "$backupMainDir" ]; then
 	# TODO: The directory where you store the Nextcloud backups (when not specified by args)
-    backupMainDir='/media/hdd/nextcloud_backup'
+	backupMainDir='/media/hdd/nextcloud_backup'
 fi
 
 echo "Backup directory: $backupMainDir"
@@ -46,7 +46,7 @@ useCompression=true
 
 # TOOD: The bare tar command for using compression.
 # Use 'tar -xmpzf' if you want to use gzip compression.
-compressionCommand="tar -I pigz -cpf"
+compressionCommand="tar -I pigz -xmpf"
 
 # TODO: The directory of your Nextcloud installation (this is a directory under your web root)
 nextcloudFileDir='/var/www/nextcloud'

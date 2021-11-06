@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.3.2
+
+### Restore
+- Bugfix: Compression command on restore
+
+### Setup
+- Hint for installing pigz when using compression
+- Bugfix: Set variable `backupMainDir` correctly
+
 ## 2.3.1
 
 ### General

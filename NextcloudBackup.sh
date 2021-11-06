@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 2.3.1
+# Version 2.3.2
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
@@ -14,7 +14,7 @@
 #
 # Usage:
 # 	- With backup directory specified in the script:  ./NextcloudBackup.sh
-# 	- With backup directory specified by parameter: ./NextcloudBackup.sh <BackupDirectory> (e.g. ./NextcloudBackup.sh /media/hdd/nextcloud_backup)
+# 	- With backup directory specified by parameter: ./NextcloudBackup.sh <backupDirectory> (e.g. ./NextcloudBackup.sh /media/hdd/nextcloud_backup)
 #
 # The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-20-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
 #
@@ -41,7 +41,7 @@ fi
 currentDate=$(date +"%Y%m%d_%H%M%S")
 
 # The actual directory of the current backup - this is a subdirectory of the main directory above with a timestamp
-backupdir="${backupMainDir}/${currentDate}"
+backupDir="${backupMainDir}/${currentDate}"
 
 # TODO: Use compression for file/data dir
 # When this is the only script for backups, it's recommend to enable compression.
@@ -160,11 +160,11 @@ fi
 #
 # Check if backup dir already exists
 #
-if [ ! -d "${backupdir}" ]
+if [ ! -d "${backupDir}" ]
 then
-	mkdir -p "${backupdir}"
+	mkdir -p "${backupDir}"
 else
-	errorecho "ERROR: The backup directory ${backupdir} already exists!"
+	errorecho "ERROR: The backup directory ${backupDir} already exists!"
 	exit 1
 fi
 
@@ -190,9 +190,9 @@ echo
 echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud file directory..."
 
 if [ "$useCompression" = true ] ; then
-	`$compressionCommand "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .`
+	`$compressionCommand "${backupDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .`
 else
-	tar -cpf "${backupdir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
+	tar -cpf "${backupDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
 fi
 
 echo "Done"
@@ -207,15 +207,15 @@ if [ "$ignoreUpdaterBackups" = true ] ; then
 	echo "Ignoring updater backup directory"
 
 	if [ "$useCompression" = true ] ; then
-		`$compressionCommand "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .`
+		`$compressionCommand "${backupDir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .`
 	else
-		tar -cpf "${backupdir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
+		tar -cpf "${backupDir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
 	fi
 else
 	if [ "$useCompression" = true ] ; then
-		`$compressionCommand "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .`
+		`$compressionCommand "${backupDir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .`
 	else
-		tar -cpf "${backupdir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
+		tar -cpf "${backupDir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
 	fi
 fi
 
@@ -229,9 +229,9 @@ if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
 	echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud local external storage directory..."
 
 	if [ "$useCompression" = true ] ; then
-		`$compressionCommand "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .`
+		`$compressionCommand "${backupDir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .`
 	else
-		tar -cpf "${backupdir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
+		tar -cpf "${backupDir}/${fileNameBackupExternalDataDir}"  -C "${nextcloudLocalExternalDataDir}" .
 	fi
 
 	echo "Done"
@@ -248,7 +248,7 @@ if [ "${databaseSystem,,}" = "mysql" ] || [ "${databaseSystem,,}" = "mariadb" ];
 		errorecho "ERROR: MySQL/MariaDB not installed (command mysqldump not found)."
 		errorecho "ERROR: No backup of database possible!"
 	else
-		mysqldump --single-transaction -h localhost -u "${dbUser}" -p"${dbPassword}" "${nextcloudDatabase}" > "${backupdir}/${fileNameBackupDb}"
+		mysqldump --single-transaction -h localhost -u "${dbUser}" -p"${dbPassword}" "${nextcloudDatabase}" > "${backupDir}/${fileNameBackupDb}"
 	fi
 
 	echo "Done"
@@ -260,7 +260,7 @@ elif [ "${databaseSystem,,}" = "postgresql" ] || [ "${databaseSystem,,}" = "pgsq
 		errorecho "ERROR: PostgreSQL not installed (command pg_dump not found)."
 		errorecho "ERROR: No backup of database possible!"
 	else
-		PGPASSWORD="${dbPassword}" pg_dump "${nextcloudDatabase}" -h localhost -U "${dbUser}" -f "${backupdir}/${fileNameBackupDb}"
+		PGPASSWORD="${dbPassword}" pg_dump "${nextcloudDatabase}" -h localhost -U "${dbUser}" -f "${backupDir}/${fileNameBackupDb}"
 	fi
 	
 	echo "Done"
@@ -301,4 +301,4 @@ fi
 
 echo
 echo "DONE!"
-echo "$(date +"%H:%M:%S"): Backup created: ${backupdir}"
+echo "$(date +"%H:%M:%S"): Backup created: ${backupDir}"

@@ -3,7 +3,7 @@
 #
 # Bash script an easy setup of NextcloudBackup.sh and NextcloudRestore.sh
 #
-# Version 2.3.0
+# Version 2.3.2
 #
 # Usage:
 # 	- call the setup.sh script
@@ -104,8 +104,8 @@ echo "Modifying NextcloudBackup.sh and NextcloudRestore.sh to match your install
 echo ""
 
 # Backup main dir
-sed -i "s@^    backupMainDir.*@    backupMainDir='$backupMainDir'@" ./NextcloudBackup.sh
-sed -i "s@^    backupMainDir.*@    backupMainDir='$backupMainDir'@" ./NextcloudRestore.sh
+sed -i "s@^\tbackupMainDir='/media/hdd/nextcloud_backup'@\tbackupMainDir='$backupMainDir'@" ./NextcloudBackup.sh
+sed -i "s@^\tbackupMainDir='/media/hdd/nextcloud_backup'@\tbackupMainDir='$backupMainDir'@" ./NextcloudRestore.sh
 
 # Nextcloud file dir
 sed -i "s@^nextcloudFileDir.*@nextcloudFileDir='$nextcloudFileDir'@" ./NextcloudBackup.sh
@@ -159,5 +159,7 @@ echo "Done!"
 echo ""
 echo ""
 echo "IMPORTANT: Please check NextcloudBackup.sh and NextcloudRestore.sh if all variables were set correctly BEFORE running these scripts!"
+echo ""
+echo "When using pigz compression, you also have to install pigz (e.g. for Debian/Ubuntu: apt install pigz)"
 echo ""
 echo ""
