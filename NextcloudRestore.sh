@@ -3,7 +3,7 @@
 #
 # Bash script for restoring backups of Nextcloud.
 #
-# Version 2.3.2
+# Version 2.3.3
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
@@ -302,18 +302,18 @@ echo "Done"
 echo
 
 #
-# Update the system data-fingerprint (see https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/occ_command.html#maintenance-commands-label)
-#
-echo "$(date +"%H:%M:%S"): Updating the system data-fingerprint..."
-sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:data-fingerprint
-echo "Done"
-echo
-
-#
 # Disbale maintenance mode
 #
 echo "$(date +"%H:%M:%S"): Switching off maintenance mode..."
 sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:mode --off
+echo "Done"
+echo
+
+#
+# Update the system data-fingerprint (see https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/occ_command.html#maintenance-commands-label)
+#
+echo "$(date +"%H:%M:%S"): Updating the system data-fingerprint..."
+sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:data-fingerprint
 echo "Done"
 echo
 

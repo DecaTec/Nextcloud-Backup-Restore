@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 2.3.2
+# Version 2.3.3
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)

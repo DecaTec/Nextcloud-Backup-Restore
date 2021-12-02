@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.3
+
+### Restore
+- Update fingerprint after disabling maintenance mode
+
 ## 2.3.2
 
 ### Restore

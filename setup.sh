@@ -3,7 +3,7 @@
 #
 # Bash script an easy setup of NextcloudBackup.sh and NextcloudRestore.sh
 #
-# Version 2.3.2
+# Version 2.3.3
 #
 # Usage:
 # 	- call the setup.sh script
