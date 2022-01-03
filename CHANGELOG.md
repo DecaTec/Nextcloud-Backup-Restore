@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.3.4
+- Bugfix: setup.sh won't set wrong database password if password contains slashes and/or backslashes
+
 ## 2.3.3
 
 ### Restore

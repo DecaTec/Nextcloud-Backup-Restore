@@ -3,7 +3,7 @@
 #
 # Bash script an easy setup of NextcloudBackup.sh and NextcloudRestore.sh
 #
-# Version 2.3.3
+# Version 2.3.4
 #
 # Usage:
 # 	- call the setup.sh script
@@ -150,9 +150,10 @@ sed -i "s/^dbUser.*/dbUser='$dbUser'/" ./NextcloudRestore.sh
 
 # Database password
 dbPassword=$(occ_get dbpassword)
+dbPassword=$(echo $dbPassword | sed 's/\\/\\\\/g')
 
-sed -i "s/^dbPassword.*/dbPassword='$dbPassword'/" ./NextcloudBackup.sh
-sed -i "s/^dbPassword.*/dbPassword='$dbPassword'/" ./NextcloudRestore.sh
+sed -i "s/^dbPassword.*/dbPassword='${dbPassword//\//\\/}'/" ./NextcloudBackup.sh
+sed -i "s/^dbPassword.*/dbPassword='${dbPassword//\//\\/}'/" ./NextcloudRestore.sh
 
 echo ""
 echo "Done!"
