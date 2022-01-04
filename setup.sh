@@ -101,6 +101,7 @@ fi
 
 if [ -e "$nextcloudBR_conf" ] ; then
   echo -e "\n\nSaving existing $nextcloudBR_conf to ${nextcloudBR_conf}_bak"
+  cp --force "$nextcloudBR_conf" "${nextcloudBR_conf}_bak"
 fi
 
 echo ""
