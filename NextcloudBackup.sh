@@ -19,22 +19,17 @@
 # The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-20-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
 #
 
-#
-# IMPORTANT
-# You have to customize this script (directories, users, etc.) for your actual environment.
-# All entries which need to be customized are tagged with "TODO".
-#
 
 # Make sure the script exits when any command fails
 set -Eeuo pipefail
 
 # Variables
-backupMainDir=${1:-} 
+nextcloudBR_conf='NextcloudBR.conf'   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
+_backupMainDir=${1:-}
 
-if [ -z "$backupMainDir" ]; then
-	# TODO: The directory where you store the Nextcloud backups (when not specified by args)
-	backupMainDir='/media/hdd/nextcloud_backup'
-else
+source "$nextcloudBR_conf" || exit 1  # Read configuration variables
+
+if [ -n "$_backupMainDir" ]; then
 	backupMainDir=$(echo $backupMainDir | sed 's:/*$::')
 fi
 
@@ -42,52 +37,6 @@ currentDate=$(date +"%Y%m%d_%H%M%S")
 
 # The actual directory of the current backup - this is a subdirectory of the main directory above with a timestamp
 backupDir="${backupMainDir}/${currentDate}"
-
-# TODO: Use compression for file/data dir
-# When this is the only script for backups, it's recommend to enable compression.
-# If the output of this script is used in another (compressing) backup (e.g. borg backup), 
-# you should probably disable compression here and only enable compression of your main backup script.
-useCompression=true
-
-# TOOD: The bare tar command for using compression.
-# Use 'tar -cpzf' if you want to use gzip compression.
-compressionCommand="tar -I pigz -cpf"
-
-# TODO: The directory of your Nextcloud installation (this is a directory under your web root)
-nextcloudFileDir='/var/www/nextcloud'
-
-# TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)
-# If your data directory is located under Nextcloud's file directory (somewhere in the web root), the data directory should not be a separate part of the backup
-nextcloudDataDir='/var/nextcloud_data'
-
-# TODO: The directory of your Nextcloud's local external storage.
-# Uncomment if you use local external storage.
-#nextcloudLocalExternalDataDir='/var/nextcloud_external_data'
-
-# TODO: The service name of the web server. Used to start/stop web server (e.g. 'systemctl start <webserverServiceName>')
-webserverServiceName='nginx'
-
-# TODO: Your web server user
-webserverUser='www-data'
-
-# TODO: The name of the database system (one of: mysql, mariadb, postgresql)
-databaseSystem='mariadb'
-
-# TODO: Your Nextcloud database name
-nextcloudDatabase='nextcloud_db'
-
-# TODO: Your Nextcloud database user
-dbUser='nextcloud_db_user'
-
-# TODO: The password of the Nextcloud database user
-dbPassword='mYpAsSw0rd'
-
-# TODO: The maximum number of backups to keep (when set to 0, all backups are kept)
-maxNrOfBackups=0
-
-# TODO: Ignore updater's backup directory in the data directory to save space
-# Set to true to ignore the backup directory
-ignoreUpdaterBackups=false
 
 # File names for backup files
 # If you prefer other file names, you'll also have to change the NextcloudRestore.sh script.
@@ -262,7 +211,7 @@ elif [ "${databaseSystem,,}" = "postgresql" ] || [ "${databaseSystem,,}" = "pgsq
 	else
 		PGPASSWORD="${dbPassword}" pg_dump "${nextcloudDatabase}" -h localhost -U "${dbUser}" -f "${backupDir}/${fileNameBackupDb}"
 	fi
-	
+
 	echo "Done"
 	echo
 fi

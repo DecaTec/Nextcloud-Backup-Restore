@@ -16,7 +16,7 @@
 #
 # IMPORTANT
 # The setup.sh script automated the configuration for the backup/restore scripts.
-# However, you should always check the backup/restore scripts BEFORE executing these!
+# However, you should always check the backup/restore config BEFORE executing these!
 #
 
 # Make sure the script exits when any command fails
@@ -29,6 +29,7 @@ backupMainDir='/media/hdd/nextcloud_backup'
 nextcloudFileDir='/var/www/nextcloud'
 webserverUser='www-data'
 webserverServiceName='nginx'
+nextcloudBR_conf='NextcloudBR.conf'  # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
 
 #
 # Gather information
@@ -95,70 +96,96 @@ if [ $? -ne 0 ]; then
 fi
 
 #
-# Read data from OCC and write to backup/restore scripts.
+# Read data from OCC and write to config file.
 #
 
-echo ""
-echo ""
-echo "Modifying NextcloudBackup.sh and NextcloudRestore.sh to match your installation..."
-echo ""
+if [ -e "$nextcloudBR_conf" ] ; then
+  echo -e "\n\nSaving existing $nextcloudBR_conf to ${nextcloudBR_conf}_bak"
+fi
 
-# Backup main dir
-sed -i "s@^\tbackupMainDir='/media/hdd/nextcloud_backup'@\tbackupMainDir='$backupMainDir'@" ./NextcloudBackup.sh
-sed -i "s@^\tbackupMainDir='/media/hdd/nextcloud_backup'@\tbackupMainDir='$backupMainDir'@" ./NextcloudRestore.sh
-
-# Nextcloud file dir
-sed -i "s@^nextcloudFileDir.*@nextcloudFileDir='$nextcloudFileDir'@" ./NextcloudBackup.sh
-sed -i "s@^nextcloudFileDir.*@nextcloudFileDir='$nextcloudFileDir'@" ./NextcloudRestore.sh
+echo ""
+echo ""
+echo "Creating $nextcloudBR_conf to match your installation..."
+echo ""
 
 # Nextcloud data dir
 nextcloudDataDir=$(occ_get datadirectory)
-
-sed -i "s@^nextcloudDataDir=.*@nextcloudDataDir='$nextcloudDataDir'@" ./NextcloudBackup.sh
-sed -i "s@^nextcloudDataDir=.*@nextcloudDataDir='$nextcloudDataDir'@" ./NextcloudRestore.sh
-
-# Webserver service name
-sed -i "s/^webserverServiceName.*/webserverServiceName='$webserverServiceName'/" ./NextcloudBackup.sh
-sed -i "s/^webserverServiceName.*/webserverServiceName='$webserverServiceName'/" ./NextcloudRestore.sh
-
-# Webserver user
-sed -i "s/^webserverUser.*/webserverUser='$webserverUser'/" ./NextcloudBackup.sh
-sed -i "s/^webserverUser.*/webserverUser='$webserverUser'/" ./NextcloudRestore.sh
 
 # Database system
 databaseSystem=$(occ_get dbtype)
 
 # PostgreSQL is identified as pgsql
-if [ "${databaseSystem,,}" = "pgsql" ]; then 
-  databaseSystem='postgresql'; 
+if [ "${databaseSystem,,}" = "pgsql" ]; then
+  databaseSystem='postgresql';
 fi
-
-sed -i "s/^databaseSystem.*/databaseSystem='$databaseSystem'/" ./NextcloudBackup.sh
-sed -i "s/^databaseSystem.*/databaseSystem='$databaseSystem'/" ./NextcloudRestore.sh
 
 # Database
 nextcloudDatabase=$(occ_get dbname)
 
-sed -i "s/^nextcloudDatabase.*/nextcloudDatabase='$nextcloudDatabase'/" ./NextcloudBackup.sh
-sed -i "s/^nextcloudDatabase.*/nextcloudDatabase='$nextcloudDatabase'/" ./NextcloudRestore.sh
-
 # Database user
 dbUser=$(occ_get dbuser)
-
-sed -i "s/^dbUser.*/dbUser='$dbUser'/" ./NextcloudBackup.sh
-sed -i "s/^dbUser.*/dbUser='$dbUser'/" ./NextcloudRestore.sh
 
 # Database password
 dbPassword=$(occ_get dbpassword)
 
-sed -i "s/^dbPassword.*/dbPassword='$dbPassword'/" ./NextcloudBackup.sh
-sed -i "s/^dbPassword.*/dbPassword='$dbPassword'/" ./NextcloudRestore.sh
+{ echo '# Configuration for Nextcloud-Backup-Restore scripts'
+  echo ''
+  echo "backupMainDir='$backupMainDir'"                # Backup main dir
+  echo ''
+  echo '# TODO: Use compression for file/data dir'
+  echo '# When this is the only script for backups, it is recommend to enable compression.'
+  echo '# If the output of this script is used in another (compressing) backup (e.g. borg backup),'
+  echo '# you should probably disable compression here and only enable compression of your main backup script.'
+  echo 'useCompression=true'
+  echo ''
+  echo '# TOOD: The bare tar command for using compression.'
+  echo "# Use 'tar -cpzf' if you want to use gzip compression."
+  echo 'compressionCommand="tar -I pigz -cpf"'
+  echo ''
+  echo '# TODO: The directory of your Nextcloud installation (this is a directory under your web root)'
+  echo "nextcloudFileDir='$nextcloudFileDir'"
+  echo ''
+  echo '# TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)'
+  echo "# If your data directory is located under Nextcloud's file directory (somewhere in the web root),"
+  echo '# the data directory should not be a separate part of the backup'
+  echo "nextcloudDataDir='$nextcloudDataDir'"
+  echo ''
+  echo "# TODO: The directory of your Nextcloud's local external storage."
+  echo '# Uncomment if you use local external storage.'
+  echo "#nextcloudLocalExternalDataDir='/var/nextcloud_external_data'"
+  echo ''
+  echo "# TODO: The service name of the web server. Used to start/stop web server (e.g. 'systemctl start <webserverServiceName>')"
+  echo "webserverServiceName='$webserverServiceName'"
+  echo ''
+  echo '# TODO: Your web server user'
+  echo "webserverUser='$webserverUser'"
+  echo ''
+  echo "# TODO: The name of the database system (one of: mysql, mariadb, postgresql)"
+  echo "databaseSystem='$databaseSystem'"
+  echo ''
+  echo '# TODO: Your Nextcloud database name'
+  echo "nextcloudDatabase='$nextcloudDatabase'"
+  echo ''
+  echo '# TODO: Your Nextcloud database user'
+  echo "dbUser='$dbUser'"
+  echo ''
+  echo '# TODO: The password of the Nextcloud database user'
+  echo "dbPassword='$dbPassword'"
+  echo ''
+  echo '# TODO: The maximum number of backups to keep (when set to 0, all backups are kept)'
+  echo 'maxNrOfBackups=0'
+  echo ''
+  echo "# TODO: Ignore updater's backup directory in the data directory to save space"
+  echo '# Set to true to ignore the backup directory'
+  echo 'ignoreUpdaterBackups=false'
+  echo ''
+} > ./"${nextcloudBR_conf}"
 
 echo ""
 echo "Done!"
 echo ""
 echo ""
-echo "IMPORTANT: Please check NextcloudBackup.sh and NextcloudRestore.sh if all variables were set correctly BEFORE running these scripts!"
+echo "IMPORTANT: Please check $nextcloudBR_conf if all variables were set correctly BEFORE running these scripts!"
 echo ""
 echo "When using pigz compression, you also have to install pigz (e.g. for Debian/Ubuntu: apt install pigz)"
 echo ""
