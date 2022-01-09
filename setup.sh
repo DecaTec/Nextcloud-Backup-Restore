@@ -129,6 +129,27 @@ dbUser=$(occ_get dbuser)
 # Database password
 dbPassword=$(occ_get dbpassword)
 
+# File names for backup files
+fileNameBackupFileDir='nextcloud-filedir.tar'
+fileNameBackupDataDir='nextcloud-datadir.tar'
+
+if [ "$useCompression" = true ] ; then
+	fileNameBackupFileDir='nextcloud-filedir.tar.gz'
+	fileNameBackupDataDir='nextcloud-datadir.tar.gz'
+fi
+
+fileNameBackupExternalDataDir=''
+
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+	fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
+
+	if [ "$useCompression" = true ] ; then
+		fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
+	fi
+fi
+
+fileNameBackupDb='nextcloud-db.sql'
+
 { echo '# Configuration for Nextcloud-Backup-Restore scripts'
   echo ''
   echo "backupMainDir='$backupMainDir'"                # Backup main dir
@@ -146,6 +167,12 @@ dbPassword=$(occ_get dbpassword)
   echo '# TOOD: The bare tar command for using compression while restoring.'
   echo "# Use 'tar -xmpzf' if you want to use gzip compression."
   echo 'extractCommand="tar -I pigz -xmpf"'
+  echo ''
+  echo "# File names for backup files"
+  echo "fileNameBackupFileDir='$fileNameBackupFileDir'"
+  echo "fileNameBackupDataDir='$fileNameBackupDataDir'"
+  echo "fileNameBackupExternalDataDir='$fileNameBackupExternalDataDir'"
+  echo "fileNameBackupDb='$fileNameBackupDb'"
   echo ''
   echo '# TODO: The directory of your Nextcloud installation (this is a directory under your web root)'
   echo "nextcloudFileDir='$nextcloudFileDir'"

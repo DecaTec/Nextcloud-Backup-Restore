@@ -52,29 +52,6 @@ echo "Backup directory: $backupMainDir"
 
 currentRestoreDir="${backupMainDir}/${restore}"
 
-# File names for backup files
-# If you prefer other file names, you'll also have to change the NextcloudBackup.sh script.
-fileNameBackupFileDir='nextcloud-filedir.tar'
-fileNameBackupDataDir='nextcloud-datadir.tar'
-
-if [ "$useCompression" = true ] ; then
-    fileNameBackupFileDir='nextcloud-filedir.tar.gz'
-    fileNameBackupDataDir='nextcloud-datadir.tar.gz'
-fi
-
-fileNameBackupExternalDataDir=''
-
-if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
-    fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
-
-    if [ "$useCompression" = true ] ; then
-        fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
-    fi
-fi
-
-fileNameBackupDb='nextcloud-db.sql'
-
-
 #
 # Check if parameter(s) given
 #

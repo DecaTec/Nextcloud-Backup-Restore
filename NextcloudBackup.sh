@@ -52,28 +52,6 @@ currentDate=$(date +"%Y%m%d_%H%M%S")
 # The actual directory of the current backup - this is a subdirectory of the main directory above with a timestamp
 backupDir="${backupMainDir}/${currentDate}"
 
-# File names for backup files
-# If you prefer other file names, you'll also have to change the NextcloudRestore.sh script.
-fileNameBackupFileDir='nextcloud-filedir.tar'
-fileNameBackupDataDir='nextcloud-datadir.tar'
-
-if [ "$useCompression" = true ] ; then
-	fileNameBackupFileDir='nextcloud-filedir.tar.gz'
-	fileNameBackupDataDir='nextcloud-datadir.tar.gz'
-fi
-
-fileNameBackupExternalDataDir=''
-
-if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
-	fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
-
-	if [ "$useCompression" = true ] ; then
-		fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
-	fi
-fi
-
-fileNameBackupDb='nextcloud-db.sql'
-
 function DisableMaintenanceMode() {
 	echo "$(date +"%H:%M:%S"): Switching off maintenance mode..."
 	sudo -u "${webserverUser}" php ${nextcloudFileDir}/occ maintenance:mode --off
