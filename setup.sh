@@ -106,7 +106,6 @@ fi
 [ -z "$MAXNUMBEROFBACKUPS" ] ||  maxNrOfBackups=$MAXNUMBEROFBACKUPS
 clear
 
-
 echo "Backup directory: ${backupMainDir}"
 echo "Nextcloud file directory: ${nextcloudFileDir}"
 echo "Webserver user: ${webserverUser}"
@@ -204,67 +203,67 @@ fi
 
 fileNameBackupDb='nextcloud-db.sql'
 
-{ echo '# Configuration for Nextcloud-Backup-Restore scripts'
-  echo ''
-  echo "backupMainDir='$backupMainDir'"                # Backup main dir
-  echo ''
-  echo '# TODO: Use compression for file/data dir'
-  echo '# When this is the only script for backups, it is recommend to enable compression.'
-  echo '# If the output of this script is used in another (compressing) backup (e.g. borg backup),'
-  echo '# you should probably disable compression here and only enable compression of your main backup script.'
-  echo 'useCompression=true'
-  echo ''
-  echo '# TOOD: The bare tar command for using compression while backup.'
+{ echo "# Configuration for Nextcloud-Backup-Restore scripts"
+  echo ""
+  echo "# TODO: The main backup directory"
+  echo "backupMainDir='$backupMainDir'"
+  echo ""
+  echo "# TODO: Use compression for file/data dir"
+  echo "# When this is the only script for backups, it is recommend to enable compression."
+  echo "# If the output of this script is used in another (compressing) backup (e.g. borg backup),"
+  echo "# you should probably disable compression here and only enable compression of your main backup script."
+  echo "useCompression=true"
+  echo ""
+  echo "# TOOD: The bare tar command for using compression while backup."
   echo "# Use 'tar -cpzf' if you want to use gzip compression."
-  echo 'compressionCommand="tar -I pigz -cpf"'
-  echo ''
-  echo '# TOOD: The bare tar command for using compression while restoring.'
+  echo "compressionCommand='tar -I pigz -cpf'"
+  echo ""
+  echo "# TOOD: The bare tar command for using compression while restoring."
   echo "# Use 'tar -xmpzf' if you want to use gzip compression."
-  echo 'extractCommand="tar -I pigz -xmpf"'
-  echo ''
-  echo "# File names for backup files"
+  echo "extractCommand='tar -I pigz -xmpf'"
+  echo ""
+  echo "# TODO: File names for backup files"
   echo "fileNameBackupFileDir='$fileNameBackupFileDir'"
   echo "fileNameBackupDataDir='$fileNameBackupDataDir'"
   echo "fileNameBackupExternalDataDir='$fileNameBackupExternalDataDir'"
   echo "fileNameBackupDb='$fileNameBackupDb'"
-  echo ''
-  echo '# TODO: The directory of your Nextcloud installation (this is a directory under your web root)'
+  echo ""
+  echo "# TODO: The directory of your Nextcloud installation (this is a directory under your web root)"
   echo "nextcloudFileDir='$nextcloudFileDir'"
-  echo ''
-  echo '# TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)'
+  echo ""
+  echo "# TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)"
   echo "# If your data directory is located under Nextcloud's file directory (somewhere in the web root),"
-  echo '# the data directory should not be a separate part of the backup'
+  echo "# the data directory should not be a separate part of the backup"
   echo "nextcloudDataDir='$nextcloudDataDir'"
-  echo ''
+  echo ""
   echo "# TODO: The directory of your Nextcloud's local external storage."
-  echo '# Uncomment if you use local external storage.'
+  echo "# Uncomment if you use local external storage."
   echo "#nextcloudLocalExternalDataDir='/var/nextcloud_external_data'"
-  echo ''
+  echo ""
   echo "# TODO: The service name of the web server. Used to start/stop web server (e.g. 'systemctl start <webserverServiceName>')"
   echo "webserverServiceName='$webserverServiceName'"
-  echo ''
-  echo '# TODO: Your web server user'
+  echo ""
+  echo "# TODO: Your web server user"
   echo "webserverUser='$webserverUser'"
-  echo ''
+  echo ""
   echo "# TODO: The name of the database system (one of: mysql, mariadb, postgresql)"
   echo "databaseSystem='$databaseSystem'"
-  echo ''
-  echo '# TODO: Your Nextcloud database name'
+  echo ""
+  echo "# TODO: Your Nextcloud database name"
   echo "nextcloudDatabase='$nextcloudDatabase'"
-  echo ''
-  echo '# TODO: Your Nextcloud database user'
+  echo ""
+  echo "# TODO: Your Nextcloud database user"
   echo "dbUser='$dbUser'"
-  echo ''
-  echo '# TODO: The password of the Nextcloud database user'
+  echo ""
+  echo "# TODO: The password of the Nextcloud database user"
   echo "dbPassword='$dbPassword'"
-  echo ''
-  echo '# TODO: The maximum number of backups to keep (when set to 0, all backups are kept)'
+  echo ""
+  echo "# TODO: The maximum number of backups to keep (when set to 0, all backups are kept)"
   echo "maxNrOfBackups=$maxNrOfBackups"
-  echo ''
+  echo ""
   echo "# TODO: Ignore updater's backup directory in the data directory to save space"
-  echo '# Set to true to ignore the backup directory'
+  echo "# Set to true to ignore the backup directory"
   echo "ignoreUpdaterBackups='$ignoreUpdaterBackups'"
-  echo ''
 } > ./"${NextcloudBackupRestoreConf}"
 
 echo ""
