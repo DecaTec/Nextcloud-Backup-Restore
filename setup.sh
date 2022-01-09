@@ -72,7 +72,7 @@ echo ""
 read -p "Should the backed up data be compressed (pigz should be installed in the machine)? [Y/n]: " USECOMPRESSION
 
 useCompression=true
-if [ "$USECOMPRESSION" != 'n' ] ; then
+if [ "$USECOMPRESSION" == 'n' ] ; then
   useCompression=false
 fi
 
