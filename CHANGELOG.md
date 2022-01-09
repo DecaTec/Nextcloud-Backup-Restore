@@ -1,7 +1,12 @@
 # Changelog
 
 ## 2.3.4
+
+### General
 - Bugfix: setup.sh won't set wrong database password if password contains slashes and/or backslashes
+
+### Restore
+- While restore, only the contents of Nextcloud's data directory gets removed, rather than the whole directory (useful when the data directory is stored directly in a mounted drive)
 
 ## 2.3.3
 
