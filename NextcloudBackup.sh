@@ -24,10 +24,24 @@
 set -Eeuo pipefail
 
 # Variables
-NextcloudBackupRestoreConf='NextcloudBackupRestore.conf'   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
+configFile='NextcloudBackupRestore.conf'   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
 _backupMainDir=${1:-}
 
-source "$NextcloudBackupRestoreConf" || exit 1  # Read configuration variables
+# Function for error messages
+errorecho() { cat <<< "$@" 1>&2; }
+
+#
+# Check if config file exists
+#
+if [ ! -f "${configFile}" ]
+then
+	errorecho "ERROR: Configuration file $configFile cannot be found!"
+    errorecho "Please make sure that a configuratrion file '$configFile' is present in the main directory of the scripts."
+    errorecho "This file can be created automatically using the setup.sh script."
+    exit 1
+fi
+
+source "$configFile" || exit 1  # Read configuration variables
 
 if [ -n "$_backupMainDir" ]; then
 	backupMainDir=$(echo $backupMainDir | sed 's:/*$::')
@@ -59,9 +73,6 @@ if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
 fi
 
 fileNameBackupDb='nextcloud-db.sql'
-
-# Function for error messages
-errorecho() { cat <<< "$@" 1>&2; }
 
 function DisableMaintenanceMode() {
 	echo "$(date +"%H:%M:%S"): Switching off maintenance mode..."
