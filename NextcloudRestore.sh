@@ -24,11 +24,11 @@
 set -Eeuo pipefail
 
 # Variables
-nextcloudBR_conf='NextcloudBR.conf'   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
+NextcloudBackupRestoreConf='NextcloudBackupRestore.conf'   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
 restore=${1:-}
 _backupMainDir=${2:-}
 
-source "$nextcloudBR_conf" || exit 1  # Read configuration variables
+source "$NextcloudBackupRestoreConf" || exit 1  # Read configuration variables
 
 if [ -n "$_backupMainDir" ]; then
 	backupMainDir="$_backupMainDir"
@@ -160,7 +160,7 @@ fi
 echo "$(date +"%H:%M:%S"): Restoring Nextcloud file directory..."
 
 if [ "$useCompression" = true ] ; then
-    `$compressionCommand "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"`
+    `$extractCommand "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"`
 else
     tar -xmpf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
 fi
@@ -172,7 +172,7 @@ echo
 echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
 
 if [ "$useCompression" = true ] ; then
-    `$compressionCommand "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"`
+    `$extractCommand "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"`
 else
     tar -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
 fi
@@ -185,7 +185,7 @@ if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
     echo "$(date +"%H:%M:%S"): Restoring Nextcloud local external storage directory..."
 
     if [ "$useCompression" = true ] ; then
-        `$compressionCommand "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"`
+        `$extractCommand "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"`
     else
         tar -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
     fi

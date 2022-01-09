@@ -24,10 +24,10 @@
 set -Eeuo pipefail
 
 # Variables
-nextcloudBR_conf='NextcloudBR.conf'   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
+NextcloudBackupRestoreConf='NextcloudBackupRestore.conf'   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
 _backupMainDir=${1:-}
 
-source "$nextcloudBR_conf" || exit 1  # Read configuration variables
+source "$NextcloudBackupRestoreConf" || exit 1  # Read configuration variables
 
 if [ -n "$_backupMainDir" ]; then
 	backupMainDir=$(echo $backupMainDir | sed 's:/*$::')

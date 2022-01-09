@@ -29,7 +29,7 @@ backupMainDir='/media/hdd/nextcloud_backup'
 nextcloudFileDir='/var/www/nextcloud'
 webserverUser='www-data'
 webserverServiceName='nginx'
-nextcloudBR_conf='NextcloudBR.conf'  # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
+NextcloudBackupRestoreConf='NextcloudBackupRestore.conf'  # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
 
 #
 # Gather information
@@ -99,14 +99,14 @@ fi
 # Read data from OCC and write to config file.
 #
 
-if [ -e "$nextcloudBR_conf" ] ; then
-  echo -e "\n\nSaving existing $nextcloudBR_conf to ${nextcloudBR_conf}_bak"
-  cp --force "$nextcloudBR_conf" "${nextcloudBR_conf}_bak"
+if [ -e "$NextcloudBackupRestoreConf" ] ; then
+  echo -e "\n\nSaving existing $NextcloudBackupRestoreConf to ${NextcloudBackupRestoreConf}_bak"
+  cp --force "$NextcloudBackupRestoreConf" "${NextcloudBackupRestoreConf}_bak"
 fi
 
 echo ""
 echo ""
-echo "Creating $nextcloudBR_conf to match your installation..."
+echo "Creating $NextcloudBackupRestoreConf to match your installation..."
 echo ""
 
 # Nextcloud data dir
@@ -140,9 +140,13 @@ dbPassword=$(echo $dbPassword | sed 's/\\/\\\\/g')
   echo '# you should probably disable compression here and only enable compression of your main backup script.'
   echo 'useCompression=true'
   echo ''
-  echo '# TOOD: The bare tar command for using compression.'
+  echo '# TOOD: The bare tar command for using compression while backup.'
   echo "# Use 'tar -cpzf' if you want to use gzip compression."
   echo 'compressionCommand="tar -I pigz -cpf"'
+  echo ''
+  echo '# TOOD: The bare tar command for using compression while restoring.'
+  echo "# Use 'tar -xmpzf' if you want to use gzip compression."
+  echo 'extractCommand="tar -I pigz -cpf"'
   echo ''
   echo '# TODO: The directory of your Nextcloud installation (this is a directory under your web root)'
   echo "nextcloudFileDir='$nextcloudFileDir'"
@@ -181,13 +185,13 @@ dbPassword=$(echo $dbPassword | sed 's/\\/\\\\/g')
   echo '# Set to true to ignore the backup directory'
   echo 'ignoreUpdaterBackups=false'
   echo ''
-} > ./"${nextcloudBR_conf}"
+} > ./"${NextcloudBackupRestoreConf}"
 
 echo ""
 echo "Done!"
 echo ""
 echo ""
-echo "IMPORTANT: Please check $nextcloudBR_conf if all variables were set correctly BEFORE running these scripts!"
+echo "IMPORTANT: Please check $NextcloudBackupRestoreConf if all variables were set correctly BEFORE running these scripts!"
 echo ""
 echo "When using pigz compression, you also have to install pigz (e.g. for Debian/Ubuntu: apt install pigz)"
 echo ""
