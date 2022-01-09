@@ -128,7 +128,6 @@ dbUser=$(occ_get dbuser)
 
 # Database password
 dbPassword=$(occ_get dbpassword)
-dbPassword=$(echo $dbPassword | sed 's/\\/\\\\/g')
 
 { echo '# Configuration for Nextcloud-Backup-Restore scripts'
   echo ''
@@ -146,7 +145,7 @@ dbPassword=$(echo $dbPassword | sed 's/\\/\\\\/g')
   echo ''
   echo '# TOOD: The bare tar command for using compression while restoring.'
   echo "# Use 'tar -xmpzf' if you want to use gzip compression."
-  echo 'extractCommand="tar -I pigz -cpf"'
+  echo 'extractCommand="tar -I pigz -xmpf"'
   echo ''
   echo '# TODO: The directory of your Nextcloud installation (this is a directory under your web root)'
   echo "nextcloudFileDir='$nextcloudFileDir'"
