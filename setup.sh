@@ -68,6 +68,17 @@ read -p "Enter an new webserver service name or press ENTER if the webserver ser
 [ -z "$WEBSERVERSERVICENAME" ] ||  webserverServiceName=$WEBSERVERSERVICENAME
 clear
 
+echo "Should the backed up data be compressed?"
+echo ""
+read -p "Should the backed up data be compressed? [y/N]: " USECOMPRESSION
+
+useCompression=true
+if [ "$USECOMPRESSION" != 'y' ] ; then
+  useCompression=false
+fi
+
+clear
+
 echo "Backup directory: ${backupMainDir}"
 echo "Nextcloud file directory: ${nextcloudFileDir}"
 echo "Webserver user: ${webserverUser}"
