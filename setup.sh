@@ -83,7 +83,13 @@ echo "Backup directory: ${backupMainDir}"
 echo "Nextcloud file directory: ${nextcloudFileDir}"
 echo "Webserver user: ${webserverUser}"
 echo "Webserver service name: ${webserverServiceName}"
-echo ""
+
+if [ "$useCompression" = true ] ; then
+	echo "Compression: yes"
+else
+  	echo "Compression: no"
+fi
+
 read -p "Is the information correct? [y/N] " CORRECTINFO
 
 if [ "$CORRECTINFO" != 'y' ] ; then
