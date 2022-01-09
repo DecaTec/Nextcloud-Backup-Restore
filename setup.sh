@@ -29,6 +29,9 @@ backupMainDir='/media/hdd/nextcloud_backup'
 nextcloudFileDir='/var/www/nextcloud'
 webserverUser='www-data'
 webserverServiceName='nginx'
+useCompression=true
+ignoreUpdaterBackups=true
+
 NextcloudBackupRestoreConf='NextcloudBackupRestore.conf'  # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
 
 #
@@ -71,7 +74,6 @@ clear
 echo ""
 read -p "Should the backed up data be compressed (pigz should be installed in the machine)? [Y/n]: " USECOMPRESSION
 
-useCompression=true
 if [ "$USECOMPRESSION" == 'n' ] ; then
   useCompression=false
 fi
@@ -81,7 +83,6 @@ clear
 echo ""
 read -p "Should the backups created by the Nextcloud updater be included in the backups (usually not necessary)? [y/N]: " IGNOREUPDATERBACKUPS
 
-ignoreUpdaterBackups=true
 if [ "$IGNOREUPDATERBACKUPS" != 'y' ] ; then
   ignoreUpdaterBackups=false
 fi
@@ -139,13 +140,13 @@ function occ_get() {
 }
 
 # Make test call to OCC
-occ_get datadirectory
+occ_get datadirectory >/dev/null 2>&1
 
 if [ $? -ne 0 ]; then
     echo "Error calling OCC: Please check if the information provided was correct."
     echo "ABORTING!"
-  	echo "No file has been altered."
-  	exit 1
+    echo "No file has been altered."
+    exit 1
 fi
 
 #
