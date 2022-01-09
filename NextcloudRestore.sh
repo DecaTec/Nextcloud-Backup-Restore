@@ -174,23 +174,22 @@ echo
 
 # File directory
 echo "$(date +"%H:%M:%S"): Deleting old Nextcloud file directory..."
-rm -r "${nextcloudFileDir}"
+rm -rf "${nextcloudFileDir}"
 mkdir -p "${nextcloudFileDir}"
 echo "Done"
 echo
 
 # Data directory
 echo "$(date +"%H:%M:%S"): Deleting old Nextcloud data directory..."
-rm -r "${nextcloudDataDir}"
-mkdir -p "${nextcloudDataDir}"
+rm -rf "${nextcloudDataDir}/*"
+
 echo "Done"
 echo
 
 # Local external storage
 if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
     echo "Deleting old Nextcloud local external storage directory..."
-    rm -r "${nextcloudLocalExternalDataDir}"
-    mkdir -p "${nextcloudLocalExternalDataDir}"
+    rm -rf "${nextcloudLocalExternalDataDir}/*"
     echo "Done"
     echo
 fi
