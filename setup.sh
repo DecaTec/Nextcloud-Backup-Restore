@@ -68,16 +68,44 @@ read -p "Enter an new webserver service name or press ENTER if the webserver ser
 [ -z "$WEBSERVERSERVICENAME" ] ||  webserverServiceName=$WEBSERVERSERVICENAME
 clear
 
-echo "Should the backed up data be compressed?"
 echo ""
-read -p "Should the backed up data be compressed? [y/N]: " USECOMPRESSION
+read -p "Should the backed up data be compressed (pigz should be installed in the machine)? [Y/n]: " USECOMPRESSION
 
 useCompression=true
-if [ "$USECOMPRESSION" != 'y' ] ; then
+if [ "$USECOMPRESSION" != 'n' ] ; then
   useCompression=false
 fi
 
 clear
+
+echo ""
+read -p "Should the backups created by the Nextcloud updater be included in the backups (usually not necessary)? [y/N]: " IGNOREUPDATERBACKUPS
+
+ignoreUpdaterBackups=true
+if [ "$IGNOREUPDATERBACKUPS" != 'y' ] ; then
+  ignoreUpdaterBackups=false
+fi
+
+clear
+
+echo "How many backups should be kept?"
+echo "If this is set to '0', no backups will be deleted."
+echo ""
+read -p "How many backups should be kept (default: '0'): " MAXNUMBEROFBACKUPS
+
+maxNrOfBackups=0
+
+if ! [ -z "$MAXNUMBEROFBACKUPS" ]  && ! [[ "$MAXNUMBEROFBACKUPS" =~ ^[0-9]+$ ]] ; then
+  echo "ERROR: Number of backups must be a positive integer!"
+  echo ""
+  echo "ABORTING!"
+  echo "No file has been altered."
+  exit 1
+fi
+
+[ -z "$MAXNUMBEROFBACKUPS" ] ||  maxNrOfBackups=$MAXNUMBEROFBACKUPS
+clear
+
 
 echo "Backup directory: ${backupMainDir}"
 echo "Nextcloud file directory: ${nextcloudFileDir}"
@@ -89,6 +117,15 @@ if [ "$useCompression" = true ] ; then
 else
   	echo "Compression: no"
 fi
+
+if [ "$ignoreUpdaterBackups" = true ] ; then
+	echo "Ignore backups created by the Nextcloud updater: yes"
+else
+  	echo "Ignore backups created by the Nextcloud updater: no"
+fi
+
+echo "Number of backups to keep (0: keep all backups): ${maxNrOfBackups}"
+echo ""
 
 read -p "Is the information correct? [y/N] " CORRECTINFO
 
@@ -222,11 +259,11 @@ fileNameBackupDb='nextcloud-db.sql'
   echo "dbPassword='$dbPassword'"
   echo ''
   echo '# TODO: The maximum number of backups to keep (when set to 0, all backups are kept)'
-  echo 'maxNrOfBackups=0'
+  echo "maxNrOfBackups=$maxNrOfBackups"
   echo ''
   echo "# TODO: Ignore updater's backup directory in the data directory to save space"
   echo '# Set to true to ignore the backup directory'
-  echo 'ignoreUpdaterBackups=false'
+  echo "ignoreUpdaterBackups='$ignoreUpdaterBackups'"
   echo ''
 } > ./"${NextcloudBackupRestoreConf}"
 
@@ -235,7 +272,11 @@ echo "Done!"
 echo ""
 echo ""
 echo "IMPORTANT: Please check $NextcloudBackupRestoreConf if all variables were set correctly BEFORE running these scripts!"
-echo ""
-echo "When using pigz compression, you also have to install pigz (e.g. for Debian/Ubuntu: apt install pigz)"
+
+if [ "$useCompression" = true ] ; then
+  echo ""
+	echo "As compression should be used for backups, please make sure that pigz is installed (e.g. for Debian/Ubuntu: apt install pigz)"
+fi
+
 echo ""
 echo ""
