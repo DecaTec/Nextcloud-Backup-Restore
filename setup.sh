@@ -1,22 +1,23 @@
 #!/bin/bash
 
 #
-# Bash script an easy setup of NextcloudBackup.sh and NextcloudRestore.sh
+# Bash script for an easy setup of Nextcloud backup/restore scripts.
 #
-# Version 2.3.4
+# Version 3.0.0
 #
 # Usage:
 # 	- call the setup.sh script
 #   - Enter the required information
-#   - You NextcloudBackup.sh and NextcloudRestore.sh scripts will be tailored to match you installation.
+#   - A central configuration file `NextcloudBackupRestore.conf` will be created to match you Nextcloud instance.
+#   - This configuration file then is used by the backup/restore scripts.
 #
 # The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-18-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
 #
 
 #
 # IMPORTANT
-# The setup.sh script automated the configuration for the backup/restore scripts.
-# However, you should always check the backup/restore config BEFORE executing these!
+# The setup.sh script automated the configuration for the backup/restore scripts (file `NextcloudBackupRestore.conf`).
+# However, you should always check this configuration BEFORE executing these!
 #
 
 # Make sure the script exits when any command fails
@@ -160,7 +161,7 @@ fi
 
 echo ""
 echo ""
-echo "Creating $NextcloudBackupRestoreConf to match your installation..."
+echo "Creating $NextcloudBackupRestoreConf to match your Nextcloud instance..."
 echo ""
 
 # Nextcloud data dir
@@ -271,11 +272,11 @@ echo ""
 echo "Done!"
 echo ""
 echo ""
-echo "IMPORTANT: Please check $NextcloudBackupRestoreConf if all variables were set correctly BEFORE running these scripts!"
+echo "IMPORTANT: Please check $NextcloudBackupRestoreConf if all variables were set correctly BEFORE running the backup/restore scripts!"
 
 if [ "$useCompression" = true ] ; then
   echo ""
-	echo "As compression should be used for backups, please make sure that pigz is installed (e.g. for Debian/Ubuntu: apt install pigz)"
+	echo "As compression should be used for backups, please make sure that 'pigz' is installed (e.g. for Debian/Ubuntu: apt install pigz)"
 fi
 
 echo ""

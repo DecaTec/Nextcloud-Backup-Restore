@@ -3,7 +3,7 @@
 #
 # Bash script for restoring backups of Nextcloud.
 #
-# Version 2.3.4
+# Version 3.0.0
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
@@ -37,7 +37,7 @@ errorecho() { cat <<< "$@" 1>&2; }
 if [ ! -f "${configFile}" ]
 then
 	errorecho "ERROR: Configuration file $configFile cannot be found!"
-    errorecho "Please make sure that a configuratrion file '$configFile' is present in the main directory of the scripts."
+    errorecho "Please make sure that a configuration file '$configFile' is present in the main directory of the scripts."
     errorecho "This file can be created automatically using the setup.sh script."
     exit 1
 fi

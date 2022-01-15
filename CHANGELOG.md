@@ -1,8 +1,11 @@
 # Changelog
 
-## 2.3.4
+## 3.0.0
 
 ### General
+- Backup/restore scripts now use a central configuration file (`NextcloudBackupRestore.conf`)
+- This configuration file includes all the settings which should be configured to match the specific Nextcloud instance. This simplifies the initial configuration of the backup/restore scripts
+- The setup (`setup.sh`) creates this central configuration file (`NextcloudBackupRestore.conf`) rather than modifying the backup/restore scripts
 - Bugfix: setup.sh won't set wrong database password if password contains slashes and/or backslashes
 
 ### Restore
