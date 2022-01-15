@@ -9,9 +9,9 @@ It is based on a Nextcloud installation using nginx and MariaDB (see the (German
 ## General information
 
 For a complete backup of any Nextcloud instance, you'll have to backup these items:
-- The Nextcloud file directory (usually */var/www/nextcloud*)
-- The data directory of Nextcloud (it's recommended that this is *not* located in the web root, so e.g. */var/nextcloud_data*)
-- The Nextcloud database
+- The Nextcloud **file directory** (usually */var/www/nextcloud*)
+- The **data directory** of Nextcloud (it's recommended that this is *not* located in the web root, so e.g. */var/nextcloud_data*)
+- The Nextcloud **database**
 - Maybe a local external storage mounted into Nextcloud
 
 The scripts take care of these items to backup automatically.
