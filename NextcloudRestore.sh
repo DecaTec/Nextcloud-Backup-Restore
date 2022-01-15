@@ -3,7 +3,7 @@
 #
 # Bash script for restoring backups of Nextcloud.
 #
-# Version 2.3.4
+# Version 3.0.0
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
@@ -19,91 +19,38 @@
 # The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-20-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
 #
 
-#
-# IMPORTANT
-# You have to customize this script (directories, users, etc.) for your actual environment.
-# All entries which need to be customized are tagged with "TODO".
-#
 
 # Make sure the script exits when any command fails
 set -Eeuo pipefail
 
 # Variables
-restore=${1:-} 
-backupMainDir=${2:-} 
+configFile='NextcloudBackupRestore.conf'   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
+restore=${1:-}
+_backupMainDir=${2:-}
 
-if [ -z "$backupMainDir" ]; then
-	# TODO: The directory where you store the Nextcloud backups (when not specified by args)
-	backupMainDir='/media/hdd/nextcloud_backup'
+# Function for error messages
+errorecho() { cat <<< "$@" 1>&2; }
+
+#
+# Check if config file exists
+#
+if [ ! -f "${configFile}" ]
+then
+	errorecho "ERROR: Configuration file $configFile cannot be found!"
+    errorecho "Please make sure that a configuration file '$configFile' is present in the main directory of the scripts."
+    errorecho "This file can be created automatically using the setup.sh script."
+    exit 1
+fi
+
+source "$configFile" || exit 1  # Read configuration variables
+
+if [ -n "$_backupMainDir" ]; then
+	backupMainDir="$_backupMainDir"
 fi
 
 echo "Backup directory: $backupMainDir"
 
 currentRestoreDir="${backupMainDir}/${restore}"
-
-# TODO: Set this to true, if the backup was created with compression enabled, otherwiese false.
-useCompression=true
-
-# TOOD: The bare tar command for using compression.
-# Use 'tar -xmpzf' if you want to use gzip compression.
-compressionCommand="tar -I pigz -xmpf"
-
-# TODO: The directory of your Nextcloud installation (this is a directory under your web root)
-nextcloudFileDir='/var/www/nextcloud'
-
-# TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)
-# If your data directory is located under Nextcloud's file directory (somewhere in the web root), the data directory should not be restored separately
-nextcloudDataDir='/var/nextcloud_data'
-
-# TODO: The directory of your Nextcloud's local external storage.
-# Uncomment if you use local external storage.
-#nextcloudLocalExternalDataDir='/var/nextcloud_external_data'
-
-# TODO: The service name of the web server. Used to start/stop web server (e.g. 'systemctl start <webserverServiceName>')
-webserverServiceName='nginx'
-
-# TODO: Your web server user
-webserverUser='www-data'
-
-# TODO: The name of the database system (one of: mysql, mariadb, postgresql)
-databaseSystem='mariadb'
-
-# TODO: Your Nextcloud database name
-nextcloudDatabase='nextcloud_db'
-
-# TODO: Your Nextcloud database user
-dbUser='nextcloud_db_user'
-
-# TODO: The password of the Nextcloud database user
-dbPassword='mYpAsSw0rd'
-
-# TODO: Uncomment this and set to true if the database from the backup DOES NOT use UTF8 with multibyte support (e.g. for emoijs in filenames)
-#dbNoMultibyte=true
-
-# File names for backup files
-# If you prefer other file names, you'll also have to change the NextcloudBackup.sh script.
-fileNameBackupFileDir='nextcloud-filedir.tar'
-fileNameBackupDataDir='nextcloud-datadir.tar'
-
-if [ "$useCompression" = true ] ; then
-    fileNameBackupFileDir='nextcloud-filedir.tar.gz'
-    fileNameBackupDataDir='nextcloud-datadir.tar.gz'
-fi
-
-fileNameBackupExternalDataDir=''
-
-if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
-    fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
-
-    if [ "$useCompression" = true ] ; then
-        fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
-    fi
-fi
-
-fileNameBackupDb='nextcloud-db.sql'
-
-# Function for error messages
-errorecho() { cat <<< "$@" 1>&2; }
 
 #
 # Check if parameter(s) given
@@ -202,7 +149,7 @@ fi
 echo "$(date +"%H:%M:%S"): Restoring Nextcloud file directory..."
 
 if [ "$useCompression" = true ] ; then
-    `$compressionCommand "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"`
+    `$extractCommand "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"`
 else
     tar -xmpf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
 fi
@@ -214,7 +161,7 @@ echo
 echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
 
 if [ "$useCompression" = true ] ; then
-    `$compressionCommand "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"`
+    `$extractCommand "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"`
 else
     tar -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
 fi
@@ -225,13 +172,13 @@ echo
 # Local external storage
 if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
     echo "$(date +"%H:%M:%S"): Restoring Nextcloud local external storage directory..."
-    
+
     if [ "$useCompression" = true ] ; then
-        `$compressionCommand "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"`
+        `$extractCommand "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"`
     else
         tar -xmpf "${currentRestoreDir}/${fileNameBackupExternalDataDir}" -C "${nextcloudLocalExternalDataDir}"
     fi
-    
+
     echo "Done"
     echo
 fi

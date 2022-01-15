@@ -22,9 +22,10 @@ The scripts take care of these items to backup automatically.
 
 ## Important notes about using the scripts
 
-- After cloning or downloading the repository, you'll have to edit the scripts so that they represent your current Nextcloud installation (directories, users, etc.). All values which need to be customized are marked with *TODO* in the script's comments.
+- After cloning or downloading the scripts, these need to be set up by running the script `setup.sh` (see below).
+- If you do not want to use the automated setup, you can also use the file `NextcloudBackupRestore.conf.sample` as a starting point. Just make sure to rename the file when you are done (`cp NextcloudBackupRestore.conf.sample NextcloudBackupRestore.conf`)
 - The scripts assume that Nextcloud's data directory is *not* a subdirectory of the Nextcloud installation (file directory). The general recommendation is that the data directory should not be located somewhere in the web folder of your webserver (usually */var/www/*), but in a different folder (e.g. */var/nextcloud_data*). For more information, see [here](https://docs.nextcloud.com/server/latest/admin_manual/installation/installation_wizard.html#data-directory-location-label).
-- However, if your data directory *is* located under the Nextcloud file directory, you'll have to change the scripts so that the data directory is not part of the backup/restore (otherwise, it would be copied twice).
+- However, if your data directory *is* located under the Nextcloud file directory, you'll have to change the script configuration (file `NextcloudBackupRestore.conf` after running `setup.sh`) so that the data directory is not part of the backup/restore (otherwise, it would be copied twice).
 - The scripts only backup the Nextcloud data directory and can backup a local external storage mounted into Nextcloud. If you have any other external storage mounted in Nextcloud (e.g. FTP), these files have to be handled separately.
 - The scripts support MariaDB/MySQL and PostgreSQL as database.
 - You should have enabled 4 byte support (see [Nextcloud Administration Manual](https://docs.nextcloud.com/server/latest/admin_manual/configuration_database/mysql_4byte_support.html)) on your Nextcloud database. Otherwise, when you have *not* enabled 4 byte support, you have to edit the restore script, so that the database is not created with 4 byte support enabled (variable `dbNoMultibyte`).
@@ -36,13 +37,9 @@ The scripts take care of these items to backup automatically.
     - `chown -R root Nextcloud-Backup-Restore`
     - `cd Nextcloud-Backup-Restore`
     - `chmod 700 *.sh`
-3. Call the (interactive) script for automated setup (this will modify the scripts for backup/restore to fit your Nextcloud instance, see below): `./setup.sh`
-4. **Important**: Check the scripts `NextcloudBackup.sh` and `NextcloudRestore.sh` if everything was set up correctly (see *TODO* in the script's comments)
+3. Call the (interactive) script for automated setup (this will create a file `NextcloudBackupRestore.conf` containing the desired configuration): `./setup.sh`
+4. **Important**: Check this configuration file if everything was set up correctly (see *TODO* in the configuration files's comments)
 5. Start using the scripts: See sections *Backup* and *Restore* below
-
-### Automated setup
-
-Next to the backup/restore scripts, there is another script (`setup.sh`). The setup script gathers some information and uses the [OCC command](https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/occ_command.html) in order to set the required variables in the backup/restore scripts automatically. This way, the configuration of the backup/restore scripts can be automated to some extend.
 
 ## Backup
 

@@ -1,0 +1,67 @@
+# This is a sample configuration file for Nextcloud backup and restore scripts.
+# It is recommended to use the script `setup.sh` for an easy automated setup of the backup and restore scripts.
+# This will then create the configuration file `NextcloudBackupRestore.conf`.
+#
+# If you do not want to use the setup script, you can also take this file as starting point.
+# You will have to edit all section marked with '# TODO' in order to customize the configuration so it fits your Nextcloud instance.
+# Simply copy the sample file (`cp NextcloudBackupRestore.conf.sample NextcloudBackupRestore.conf`) and edit the file accordingly.
+
+# TODO: The main backup directory
+backupMainDir='/media/hdd/nextcloud_backup'
+
+# TODO: Use compression for file/data dir
+# When this is the only script for backups, it is recommend to enable compression.
+# If the output of this script is used in another (compressing) backup (e.g. borg backup),
+# you should probably disable compression here and only enable compression of your main backup script.
+useCompression=true
+
+# TOOD: The bare tar command for using compression while backup.
+# Use 'tar -cpzf' if you want to use gzip compression.
+compressionCommand='tar -I pigz -cpf'
+
+# TOOD: The bare tar command for using compression while restoring.
+# Use 'tar -xmpzf' if you want to use gzip compression.
+extractCommand='tar -I pigz -xmpf'
+
+# TODO: File names for backup files
+fileNameBackupFileDir='nextcloud-filedir.tar.gz'
+fileNameBackupDataDir='nextcloud-datadir.tar.gz'
+fileNameBackupExternalDataDir=''
+fileNameBackupDb='nextcloud-db.sql'
+
+# TODO: The directory of your Nextcloud installation (this is a directory under your web root)
+nextcloudFileDir='/var/www/nextcloud'
+
+# TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)
+# If your data directory is located under Nextcloud's file directory (somewhere in the web root),
+# the data directory should not be a separate part of the backup
+nextcloudDataDir='/var/nextcloud_data'
+
+# TODO: The directory of your Nextcloud's local external storage.
+# Uncomment if you use local external storage.
+#nextcloudLocalExternalDataDir='/var/nextcloud_external_data'
+
+# TODO: The service name of the web server. Used to start/stop web server (e.g. 'systemctl start <webserverServiceName>')
+webserverServiceName='nginx'
+
+# TODO: Your web server user
+webserverUser='www-data'
+
+# TODO: The name of the database system (one of: mysql, mariadb, postgresql)
+databaseSystem='postgresql'
+
+# TODO: Your Nextcloud database name
+nextcloudDatabase='nextcloud_db'
+
+# TODO: Your Nextcloud database user
+dbUser='nextcloud_db_user'
+
+# TODO: The password of the Nextcloud database user
+dbPassword='pAsSw0rD'
+
+# TODO: The maximum number of backups to keep (when set to 0, all backups are kept)
+maxNrOfBackups=0
+
+# TODO: Ignore updater's backup directory in the data directory to save space
+# Set to true to ignore the backup directory
+ignoreUpdaterBackups='false'

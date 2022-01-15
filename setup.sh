@@ -1,22 +1,23 @@
 #!/bin/bash
 
 #
-# Bash script an easy setup of NextcloudBackup.sh and NextcloudRestore.sh
+# Bash script for an easy setup of Nextcloud backup/restore scripts.
 #
-# Version 2.3.4
+# Version 3.0.0
 #
 # Usage:
 # 	- call the setup.sh script
 #   - Enter the required information
-#   - You NextcloudBackup.sh and NextcloudRestore.sh scripts will be tailored to match you installation.
+#   - A central configuration file `NextcloudBackupRestore.conf` will be created to match you Nextcloud instance.
+#   - This configuration file then is used by the backup/restore scripts.
 #
 # The script is based on an installation of Nextcloud using nginx and MariaDB, see https://decatec.de/home-server/nextcloud-auf-ubuntu-server-18-04-lts-mit-nginx-mariadb-php-lets-encrypt-redis-und-fail2ban/
 #
 
 #
 # IMPORTANT
-# The setup.sh script automated the configuration for the backup/restore scripts.
-# However, you should always check the backup/restore scripts BEFORE executing these!
+# The setup.sh script automated the configuration for the backup/restore scripts (file `NextcloudBackupRestore.conf`).
+# However, you should always check this configuration BEFORE executing these!
 #
 
 # Make sure the script exits when any command fails
@@ -29,6 +30,10 @@ backupMainDir='/media/hdd/nextcloud_backup'
 nextcloudFileDir='/var/www/nextcloud'
 webserverUser='www-data'
 webserverServiceName='nginx'
+useCompression=true
+ignoreUpdaterBackups=true
+
+NextcloudBackupRestoreConf='NextcloudBackupRestore.conf'  # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
 
 #
 # Gather information
@@ -67,11 +72,62 @@ read -p "Enter an new webserver service name or press ENTER if the webserver ser
 [ -z "$WEBSERVERSERVICENAME" ] ||  webserverServiceName=$WEBSERVERSERVICENAME
 clear
 
+echo ""
+read -p "Should the backed up data be compressed (pigz should be installed in the machine)? [Y/n]: " USECOMPRESSION
+
+if [ "$USECOMPRESSION" == 'n' ] ; then
+  useCompression=false
+fi
+
+clear
+
+echo ""
+read -p "Should the backups created by the Nextcloud updater be included in the backups (usually not necessary)? [y/N]: " IGNOREUPDATERBACKUPS
+
+if [ "$IGNOREUPDATERBACKUPS" != 'y' ] ; then
+  ignoreUpdaterBackups=false
+fi
+
+clear
+
+echo "How many backups should be kept?"
+echo "If this is set to '0', no backups will be deleted."
+echo ""
+read -p "How many backups should be kept (default: '0'): " MAXNUMBEROFBACKUPS
+
+maxNrOfBackups=0
+
+if ! [ -z "$MAXNUMBEROFBACKUPS" ]  && ! [[ "$MAXNUMBEROFBACKUPS" =~ ^[0-9]+$ ]] ; then
+  echo "ERROR: Number of backups must be a positive integer!"
+  echo ""
+  echo "ABORTING!"
+  echo "No file has been altered."
+  exit 1
+fi
+
+[ -z "$MAXNUMBEROFBACKUPS" ] ||  maxNrOfBackups=$MAXNUMBEROFBACKUPS
+clear
+
 echo "Backup directory: ${backupMainDir}"
 echo "Nextcloud file directory: ${nextcloudFileDir}"
 echo "Webserver user: ${webserverUser}"
 echo "Webserver service name: ${webserverServiceName}"
+
+if [ "$useCompression" = true ] ; then
+	echo "Compression: yes"
+else
+  	echo "Compression: no"
+fi
+
+if [ "$ignoreUpdaterBackups" = true ] ; then
+	echo "Ignore backups created by the Nextcloud updater: yes"
+else
+  	echo "Ignore backups created by the Nextcloud updater: no"
+fi
+
+echo "Number of backups to keep (0: keep all backups): ${maxNrOfBackups}"
 echo ""
+
 read -p "Is the information correct? [y/N] " CORRECTINFO
 
 if [ "$CORRECTINFO" != 'y' ] ; then
@@ -85,82 +141,143 @@ function occ_get() {
 }
 
 # Make test call to OCC
-occ_get datadirectory
+occ_get datadirectory >/dev/null 2>&1
 
 if [ $? -ne 0 ]; then
     echo "Error calling OCC: Please check if the information provided was correct."
     echo "ABORTING!"
-  	echo "No file has been altered."
-  	exit 1
+    echo "No file has been altered."
+    exit 1
 fi
 
 #
-# Read data from OCC and write to backup/restore scripts.
+# Read data from OCC and write to config file.
 #
 
-echo ""
-echo ""
-echo "Modifying NextcloudBackup.sh and NextcloudRestore.sh to match your installation..."
-echo ""
+if [ -e "$NextcloudBackupRestoreConf" ] ; then
+  echo -e "\n\nSaving existing $NextcloudBackupRestoreConf to ${NextcloudBackupRestoreConf}_bak"
+  cp --force "$NextcloudBackupRestoreConf" "${NextcloudBackupRestoreConf}_bak"
+fi
 
-# Backup main dir
-sed -i "s@^\tbackupMainDir='/media/hdd/nextcloud_backup'@\tbackupMainDir='$backupMainDir'@" ./NextcloudBackup.sh
-sed -i "s@^\tbackupMainDir='/media/hdd/nextcloud_backup'@\tbackupMainDir='$backupMainDir'@" ./NextcloudRestore.sh
-
-# Nextcloud file dir
-sed -i "s@^nextcloudFileDir.*@nextcloudFileDir='$nextcloudFileDir'@" ./NextcloudBackup.sh
-sed -i "s@^nextcloudFileDir.*@nextcloudFileDir='$nextcloudFileDir'@" ./NextcloudRestore.sh
+echo ""
+echo ""
+echo "Creating $NextcloudBackupRestoreConf to match your Nextcloud instance..."
+echo ""
 
 # Nextcloud data dir
 nextcloudDataDir=$(occ_get datadirectory)
-
-sed -i "s@^nextcloudDataDir=.*@nextcloudDataDir='$nextcloudDataDir'@" ./NextcloudBackup.sh
-sed -i "s@^nextcloudDataDir=.*@nextcloudDataDir='$nextcloudDataDir'@" ./NextcloudRestore.sh
-
-# Webserver service name
-sed -i "s/^webserverServiceName.*/webserverServiceName='$webserverServiceName'/" ./NextcloudBackup.sh
-sed -i "s/^webserverServiceName.*/webserverServiceName='$webserverServiceName'/" ./NextcloudRestore.sh
-
-# Webserver user
-sed -i "s/^webserverUser.*/webserverUser='$webserverUser'/" ./NextcloudBackup.sh
-sed -i "s/^webserverUser.*/webserverUser='$webserverUser'/" ./NextcloudRestore.sh
 
 # Database system
 databaseSystem=$(occ_get dbtype)
 
 # PostgreSQL is identified as pgsql
-if [ "${databaseSystem,,}" = "pgsql" ]; then 
-  databaseSystem='postgresql'; 
+if [ "${databaseSystem,,}" = "pgsql" ]; then
+  databaseSystem='postgresql';
 fi
-
-sed -i "s/^databaseSystem.*/databaseSystem='$databaseSystem'/" ./NextcloudBackup.sh
-sed -i "s/^databaseSystem.*/databaseSystem='$databaseSystem'/" ./NextcloudRestore.sh
 
 # Database
 nextcloudDatabase=$(occ_get dbname)
 
-sed -i "s/^nextcloudDatabase.*/nextcloudDatabase='$nextcloudDatabase'/" ./NextcloudBackup.sh
-sed -i "s/^nextcloudDatabase.*/nextcloudDatabase='$nextcloudDatabase'/" ./NextcloudRestore.sh
-
 # Database user
 dbUser=$(occ_get dbuser)
 
-sed -i "s/^dbUser.*/dbUser='$dbUser'/" ./NextcloudBackup.sh
-sed -i "s/^dbUser.*/dbUser='$dbUser'/" ./NextcloudRestore.sh
-
 # Database password
 dbPassword=$(occ_get dbpassword)
-dbPassword=$(echo $dbPassword | sed 's/\\/\\\\/g')
 
-sed -i "s/^dbPassword.*/dbPassword='${dbPassword//\//\\/}'/" ./NextcloudBackup.sh
-sed -i "s/^dbPassword.*/dbPassword='${dbPassword//\//\\/}'/" ./NextcloudRestore.sh
+# File names for backup files
+fileNameBackupFileDir='nextcloud-filedir.tar'
+fileNameBackupDataDir='nextcloud-datadir.tar'
+
+if [ "$useCompression" = true ] ; then
+	fileNameBackupFileDir='nextcloud-filedir.tar.gz'
+	fileNameBackupDataDir='nextcloud-datadir.tar.gz'
+fi
+
+fileNameBackupExternalDataDir=''
+
+if [ ! -z "${nextcloudLocalExternalDataDir+x}" ] ; then
+	fileNameBackupExternalDataDir='nextcloud-external-datadir.tar'
+
+	if [ "$useCompression" = true ] ; then
+		fileNameBackupExternalDataDir='nextcloud-external-datadir.tar.gz'
+	fi
+fi
+
+fileNameBackupDb='nextcloud-db.sql'
+
+{ echo "# Configuration for Nextcloud-Backup-Restore scripts"
+  echo ""
+  echo "# TODO: The main backup directory"
+  echo "backupMainDir='$backupMainDir'"
+  echo ""
+  echo "# TODO: Use compression for file/data dir"
+  echo "# When this is the only script for backups, it is recommend to enable compression."
+  echo "# If the output of this script is used in another (compressing) backup (e.g. borg backup),"
+  echo "# you should probably disable compression here and only enable compression of your main backup script."
+  echo "useCompression=true"
+  echo ""
+  echo "# TOOD: The bare tar command for using compression while backup."
+  echo "# Use 'tar -cpzf' if you want to use gzip compression."
+  echo "compressionCommand='tar -I pigz -cpf'"
+  echo ""
+  echo "# TOOD: The bare tar command for using compression while restoring."
+  echo "# Use 'tar -xmpzf' if you want to use gzip compression."
+  echo "extractCommand='tar -I pigz -xmpf'"
+  echo ""
+  echo "# TODO: File names for backup files"
+  echo "fileNameBackupFileDir='$fileNameBackupFileDir'"
+  echo "fileNameBackupDataDir='$fileNameBackupDataDir'"
+  echo "fileNameBackupExternalDataDir='$fileNameBackupExternalDataDir'"
+  echo "fileNameBackupDb='$fileNameBackupDb'"
+  echo ""
+  echo "# TODO: The directory of your Nextcloud installation (this is a directory under your web root)"
+  echo "nextcloudFileDir='$nextcloudFileDir'"
+  echo ""
+  echo "# TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)"
+  echo "# If your data directory is located under Nextcloud's file directory (somewhere in the web root),"
+  echo "# the data directory should not be a separate part of the backup"
+  echo "nextcloudDataDir='$nextcloudDataDir'"
+  echo ""
+  echo "# TODO: The directory of your Nextcloud's local external storage."
+  echo "# Uncomment if you use local external storage."
+  echo "#nextcloudLocalExternalDataDir='/var/nextcloud_external_data'"
+  echo ""
+  echo "# TODO: The service name of the web server. Used to start/stop web server (e.g. 'systemctl start <webserverServiceName>')"
+  echo "webserverServiceName='$webserverServiceName'"
+  echo ""
+  echo "# TODO: Your web server user"
+  echo "webserverUser='$webserverUser'"
+  echo ""
+  echo "# TODO: The name of the database system (one of: mysql, mariadb, postgresql)"
+  echo "databaseSystem='$databaseSystem'"
+  echo ""
+  echo "# TODO: Your Nextcloud database name"
+  echo "nextcloudDatabase='$nextcloudDatabase'"
+  echo ""
+  echo "# TODO: Your Nextcloud database user"
+  echo "dbUser='$dbUser'"
+  echo ""
+  echo "# TODO: The password of the Nextcloud database user"
+  echo "dbPassword='$dbPassword'"
+  echo ""
+  echo "# TODO: The maximum number of backups to keep (when set to 0, all backups are kept)"
+  echo "maxNrOfBackups=$maxNrOfBackups"
+  echo ""
+  echo "# TODO: Ignore updater's backup directory in the data directory to save space"
+  echo "# Set to true to ignore the backup directory"
+  echo "ignoreUpdaterBackups='$ignoreUpdaterBackups'"
+} > ./"${NextcloudBackupRestoreConf}"
 
 echo ""
 echo "Done!"
 echo ""
 echo ""
-echo "IMPORTANT: Please check NextcloudBackup.sh and NextcloudRestore.sh if all variables were set correctly BEFORE running these scripts!"
-echo ""
-echo "When using pigz compression, you also have to install pigz (e.g. for Debian/Ubuntu: apt install pigz)"
+echo "IMPORTANT: Please check $NextcloudBackupRestoreConf if all variables were set correctly BEFORE running the backup/restore scripts!"
+
+if [ "$useCompression" = true ] ; then
+  echo ""
+	echo "As compression should be used for backups, please make sure that 'pigz' is installed (e.g. for Debian/Ubuntu: apt install pigz)"
+fi
+
 echo ""
 echo ""
