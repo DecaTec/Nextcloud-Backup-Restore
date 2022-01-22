@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 3.0.0
+# Version 3.0.1
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
@@ -141,7 +141,7 @@ echo
 #
 echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud data directory..."
 
-if [ "$ignoreUpdaterBackups" = true ] ; then
+if [ "$includeUpdaterBackups" = false ] ; then
 	echo "Ignoring updater backup directory"
 
 	if [ "$useCompression" = true ] ; then

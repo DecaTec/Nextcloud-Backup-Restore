@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.1
+
+### Backup
+- Bugfix: Option to include/ignore backups from the Nextcloud updater was not set correctly during setup
+
 ## 3.0.0
 
 ### General
