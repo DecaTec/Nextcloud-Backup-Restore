@@ -142,7 +142,7 @@ echo
 echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud data directory..."
 
 if [ "$includeUpdaterBackups" = false ] ; then
-	echo "Ignoring updater backup directory"
+	echo "Ignoring Nextcloud updater backup directory"
 
 	if [ "$useCompression" = true ] ; then
 		`$compressionCommand "${backupDir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .`
