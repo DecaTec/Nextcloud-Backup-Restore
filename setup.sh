@@ -3,7 +3,7 @@
 #
 # Bash script for an easy setup of Nextcloud backup/restore scripts.
 #
-# Version 3.0.0
+# Version 3.0.1
 #
 # Usage:
 # 	- call the setup.sh script
@@ -31,7 +31,7 @@ nextcloudFileDir='/var/www/nextcloud'
 webserverUser='www-data'
 webserverServiceName='nginx'
 useCompression=true
-ignoreUpdaterBackups=true
+includeUpdaterBackups=false
 
 NextcloudBackupRestoreConf='NextcloudBackupRestore.conf'  # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
 
@@ -82,10 +82,10 @@ fi
 clear
 
 echo ""
-read -p "Should the backups created by the Nextcloud updater be included in the backups (usually not necessary)? [y/N]: " IGNOREUPDATERBACKUPS
+read -p "Should the backups created by the Nextcloud updater be included in the backups (usually not necessary)? [y/N]: " INCLUDEPDATERBACKUPS
 
-if [ "$IGNOREUPDATERBACKUPS" != 'y' ] ; then
-  ignoreUpdaterBackups=false
+if [ "$INCLUDEPDATERBACKUPS" == 'y' ] ; then
+  includeUpdaterBackups=true
 fi
 
 clear
@@ -116,13 +116,13 @@ echo "Webserver service name: ${webserverServiceName}"
 if [ "$useCompression" = true ] ; then
 	echo "Compression: yes"
 else
-  	echo "Compression: no"
+  echo "Compression: no"
 fi
 
-if [ "$ignoreUpdaterBackups" = true ] ; then
-	echo "Ignore backups created by the Nextcloud updater: yes"
+if [ "$includeUpdaterBackups" = true ] ; then
+	echo "Include backups from the Nextcloud updater: yes"
 else
-  	echo "Ignore backups created by the Nextcloud updater: no"
+  echo "Include backups from the Nextcloud updater: no"
 fi
 
 echo "Number of backups to keep (0: keep all backups): ${maxNrOfBackups}"
@@ -131,6 +131,7 @@ echo ""
 read -p "Is the information correct? [y/N] " CORRECTINFO
 
 if [ "$CORRECTINFO" != 'y' ] ; then
+  echo ""
   echo "ABORTING!"
   echo "No file has been altered."
   exit 1
@@ -144,10 +145,11 @@ function occ_get() {
 occ_get datadirectory >/dev/null 2>&1
 
 if [ $? -ne 0 ]; then
-    echo "Error calling OCC: Please check if the information provided was correct."
-    echo "ABORTING!"
-    echo "No file has been altered."
-    exit 1
+  echo ""
+  echo "Error calling OCC: Please check if the information provided was correct."
+  echo "ABORTING!"
+  echo "No file has been altered."
+  exit 1
 fi
 
 #
@@ -265,7 +267,7 @@ fileNameBackupDb='nextcloud-db.sql'
   echo ""
   echo "# TODO: Ignore updater's backup directory in the data directory to save space"
   echo "# Set to true to ignore the backup directory"
-  echo "ignoreUpdaterBackups='$ignoreUpdaterBackups'"
+  echo "includeUpdaterBackups=$includeUpdaterBackups"
 } > ./"${NextcloudBackupRestoreConf}"
 
 echo ""
