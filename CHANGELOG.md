@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.3
+
+### General
+- Variable `includeUpdaterBackups` in `NextcloudBackupRestore.conf.sample`
+
 ## 3.0.2
 
 ### Backup
