@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.2
+
+### Backup
+- Bugfix: When calling the backup script by cron, the configuration file `NextcloudBackupRestore.conf` could not be found
+
 ## 3.0.1
 
 ### Backup

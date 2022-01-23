@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud.
 #
-# Version 3.0.1
+# Version 3.0.2
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
@@ -24,7 +24,8 @@
 set -Eeuo pipefail
 
 # Variables
-configFile='NextcloudBackupRestore.conf'   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
+working_dir=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+configFile="${working_dir}/NextcloudBackupRestore.conf"   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
 _backupMainDir=${1:-}
 
 # Function for error messages
@@ -36,9 +37,9 @@ errorecho() { cat <<< "$@" 1>&2; }
 if [ ! -f "${configFile}" ]
 then
 	errorecho "ERROR: Configuration file $configFile cannot be found!"
-    errorecho "Please make sure that a configuratrion file '$configFile' is present in the main directory of the scripts."
-    errorecho "This file can be created automatically using the setup.sh script."
-    exit 1
+	errorecho "Please make sure that a configuratrion file '$configFile' is present in the main directory of the scripts."
+	errorecho "This file can be created automatically using the setup.sh script."
+	exit 1
 fi
 
 source "$configFile" || exit 1  # Read configuration variables

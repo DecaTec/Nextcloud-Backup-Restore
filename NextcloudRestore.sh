@@ -3,7 +3,7 @@
 #
 # Bash script for restoring backups of Nextcloud.
 #
-# Version 3.0.1
+# Version 3.0.2
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
@@ -24,7 +24,8 @@
 set -Eeuo pipefail
 
 # Variables
-configFile='NextcloudBackupRestore.conf'   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
+working_dir=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+configFile="${working_dir}/NextcloudBackupRestore.conf"   # Holds the configuration for NextcloudBackup.sh and NextcloudRestore.sh
 restore=${1:-}
 _backupMainDir=${2:-}
 
