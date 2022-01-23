@@ -62,6 +62,6 @@ dbPassword='pAsSw0rD'
 # TODO: The maximum number of backups to keep (when set to 0, all backups are kept)
 maxNrOfBackups=0
 
-# TODO: Ignore updater's backup directory in the data directory to save space
-# Set to true to ignore the backup directory
-ignoreUpdaterBackups='false'
+# TODO: Setting to include/exclude the backup directory of the Nextcloud updater
+# Set to true in order to include the backups of the Nextcloud updater
+includeUpdaterBackups=false

@@ -265,8 +265,8 @@ fileNameBackupDb='nextcloud-db.sql'
   echo "# TODO: The maximum number of backups to keep (when set to 0, all backups are kept)"
   echo "maxNrOfBackups=$maxNrOfBackups"
   echo ""
-  echo "# TODO: Ignore updater's backup directory in the data directory to save space"
-  echo "# Set to true to ignore the backup directory"
+  echo "# TODO: Setting to include/exclude the backup directory of the Nextcloud updater"
+  echo "# Set to true in order to include the backups of the Nextcloud updater"
   echo "includeUpdaterBackups=$includeUpdaterBackups"
 } > ./"${NextcloudBackupRestoreConf}"
 
