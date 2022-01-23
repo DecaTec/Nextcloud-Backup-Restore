@@ -45,7 +45,7 @@ fi
 source "$configFile" || exit 1  # Read configuration variables
 
 if [ -n "$_backupMainDir" ]; then
-	backupMainDir=$(echo $backupMainDir | sed 's:/*$::')
+	backupMainDir=$(echo $_backupMainDir | sed 's:/*$::')
 fi
 
 currentDate=$(date +"%Y%m%d_%H%M%S")
