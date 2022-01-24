@@ -5,7 +5,7 @@
 ### General
 - Variable `includeUpdaterBackups` in `NextcloudBackupRestore.conf.sample`
 
-## Backup
+### Backup
 - Bugfix: The backup directory was not recognized when given by parameter
 
 ## 3.0.2
