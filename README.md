@@ -1,3 +1,7 @@
+<a href="https://codeberg.org/DecaTec/Nextcloud-Backup-Restore">
+    <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="60">
+</a>
+
 ### :warning: Archived, moved to Codeberg: https://codeberg.org/DecaTec/Nextcloud-Backup-Restore :warning:
 
 [![release](https://img.shields.io/badge/dynamic/json.svg?label=release&url=https://codeberg.org/api/v1/repos/DecaTec/Nextcloud-Backup-Restore/releases&query=$[0].tag_name)](https://codeberg.org/DecaTec/Nextcloud-Backup-Restore/releases)
